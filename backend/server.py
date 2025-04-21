@@ -12,7 +12,10 @@ from flask_login import (
     current_user
 )
 
+from flask_cors import CORS # Lagt till detta för synkning
+
 app = Flask(__name__)
+CORS(app, supports_credentials=True) # Initialiserar CORS
 
 # set up db, if azure env var exists use that, else use sqlite
 # this is just here temporarily until we know if we want to use Azure or something else - Azure is not set up yet
@@ -261,4 +264,4 @@ def internal_server_error(error):
     return jsonify({'message': 'internal server error'}), 500
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=5080)

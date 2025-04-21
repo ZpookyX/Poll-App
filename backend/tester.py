@@ -1,6 +1,7 @@
 import pytest
-import server
-from server import db, Poll, PollOption, Vote, User
+from backend import server
+from backend.server import db, Poll, PollOption, Vote
+
 
 # set up app for testing with in-memory sqlite
 @pytest.fixture()
