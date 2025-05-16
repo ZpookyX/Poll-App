@@ -11,7 +11,6 @@ void main() async {
   runApp(const PollApp());
 }
 
-
 class PollApp extends StatelessWidget {
   const PollApp({super.key});
   @override

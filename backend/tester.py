@@ -21,17 +21,6 @@ def app():
 def client(app):
     return app.test_client()
 
-# simple login fixture using our /login route
-@pytest.fixture()
-def login(client, app):
-    response = client.get('/login')
-    assert response.status_code == 200  # login should work
-    user_info = response.get_json()["user"]
-    # store user id in session so login persists
-    with client.session_transaction() as sess:
-        sess['_user_id'] = str(user_info["id"])
-    return user_info
-
 # test creating a poll; checks if poll saved correctly
 def test_create_poll(client, login):
     url = "/polls"

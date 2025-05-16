@@ -3,37 +3,22 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from flask_login import (
-    LoginManager,
-    UserMixin,
-    login_user,
-    login_required,
-    logout_user,
-    current_user
-)
+from flask_login import (LoginManager,UserMixin,login_user,login_required,logout_user,current_user)
+from flask_cors import CORS # Added this for synchronization
+from google.oauth2 import id_token
+from google.auth.transport import requests as grequests
+from dotenv import load_dotenv
 
-from flask_cors import CORS # Lagt till detta för synkning
+load_dotenv()  # Load variables from .env
+CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True) # Initialiserar CORS
 
-# set up db, if azure env var exists use that, else use sqlite
-# this is just here temporarily until we know if we want to use Azure or something else - Azure is not set up yet
-if "AZURE_POSTGRESQL_CONNECTIONSTRING" in os.environ:
-    conn = os.environ["AZURE_POSTGRESQL_CONNECTIONSTRING"]
-    values = dict(x.split("=") for x in conn.split(' '))
-    user_env = values['user']
-    host = values['host']
-    database = values['dbname']
-    password = values['password']
-    db_uri = f'postgresql+psycopg2://{user_env}:{password}@{host}/{database}'
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-else:
-    db_path = os.path.join(os.path.dirname(__file__), 'poll.db')
-    db_uri = f'sqlite:///{db_path}'
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-
-app.secret_key = "your_secret_key"  # not secure but probably ok for now?
+# set up db, uses sqlite
+db_path = os.path.join(os.path.dirname(__file__), 'poll.db')
+db_uri = f'sqlite:///{db_path}'
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -41,44 +26,18 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# demo login route, no credentials needed, just logs in as demo user
-# we are probably gonna implement google OAuth later but this works for now
-@app.route('/login', methods=['GET'])
-def simple_login():
-    # if no demo user exists, create one so login works
-    user = User.query.filter_by(username="Demo").first()
-    if not user:
-        user = User()
-        user.username = "Demo"
-        db.session.add(user)
-        db.session.commit()
-    login_user(user)
-    return jsonify({'message': 'logged in as Demo', 'user': {'username': user.username, 'id': user.id}}), 200
-
-# logout route
-@app.route('/logout', methods=['GET'])
-@login_required
-def simple_logout():
-    logout_user()
-    return jsonify({'message': 'logged out'}), 200
-
 # user model - we are probably gonna expand this one later
 class User(db.Model, UserMixin):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(nullable=True)  # not used
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 # poll model that holds a question and its options
-# we probably want some kind of poll author or creator that is anonymous - dont know yet
 class Poll(db.Model):
     __tablename__ = "poll"
     poll_id: Mapped[int] = mapped_column(primary_key=True)
     question: Mapped[str] = mapped_column(nullable=False)
+    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
 
     # this links poll options to a poll; cascade means when poll is deleted, options are as well
     options: Mapped[list["PollOption"]] = relationship("PollOption", back_populates="poll", cascade="all, delete-orphan")
@@ -111,6 +70,40 @@ class Vote(db.Model):
     # connects it to Option table
     option = relationship("PollOption", back_populates="votes")
 
+# Google login
+@app.route('/login', methods=['POST'])
+def google_login():
+    token = request.json.get('id_token')
+    if not token:
+        return jsonify({'error': 'Missing token'}), 400
+    try:
+        idinfo = id_token.verify_oauth2_token(token, grequests.Request(), CLIENT_ID)
+        email = idinfo['email']
+        name = idinfo.get('name', email)
+        sub = idinfo['sub']  # unique Google user ID
+
+        user = User.query.filter_by(username=email).first()
+        if not user:
+            user = User(username=email)
+            db.session.add(user)
+            db.session.commit()
+
+        login_user(user)
+        return jsonify({'message': 'logged in', 'user': {'username': user.username, 'id': user.id}}), 200
+
+    except ValueError:
+        return jsonify({'error': 'Invalid ID token'}), 400
+
+@app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message': 'logged out'}), 200
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 # create a new poll; expects json with 'question' and 'options' (list)
 @app.route('/polls', methods=['POST'])
 @login_required
@@ -127,8 +120,8 @@ def create_poll():
     db.session.add(new_poll)
     db.session.flush()  # flush so we can get poll_id for options
 
-    for opt_text in data['options']:
-        option = PollOption(poll_id=new_poll.poll_id, option_text=opt_text)
+    for option_text in data['options']:
+        option = PollOption(poll_id=new_poll.poll_id, option_text=option_text)
         db.session.add(option)
 
     db.session.commit()
@@ -165,6 +158,11 @@ def remove_poll(poll_id):
     poll = Poll.query.get(poll_id)
     if not poll:
         return jsonify({'message': "poll not found, can't be removed"}), 404
+
+    # you can only delete a poll if it has less than 10 votes
+    vote_count = sum(len(option.votes) for option in poll.options)
+    if vote_count >= 10:
+        return jsonify({'message': "can't delete poll with more than 10 votes"})
     db.session.delete(poll) # this will also delete options and votes thanks to the cascading
     db.session.commit()
     return '', 200
@@ -196,57 +194,66 @@ def vote_poll(poll_id):
     db.session.commit()
     return jsonify({'message': 'vote recorded'}), 200
 
-# get all polls with their options and vote counts
-@app.route('/polls', methods=['GET'])
-def all_polls():
-    polls = Poll.query.all()
-    result = []
+# TODO: Skapa en funktion som returnerar en lista av polls med olika val av sorteringar
 
-    for poll in polls:
-        options = []
+# unified polls endpoint with filter and sort
+@app.route('/polls', methods=['GET'])
+@login_required
+def list_polls():
+    filt = request.args.get('filter')   # 'unvoted' or 'own'
+    sort = request.args.get('sort')     # 'votes', 'votes_asc', 'completed'
+
+    # load all polls
+    polls = Poll.query.all()
+
+    # helper to check if user voted in poll
+    def has_voted(poll):
         for option in poll.options:
-            vote_count = len(option.votes)
-            options.append({
-                'option_id': option.option_id,
-                'option_text': option.option_text,
-                'votes': vote_count
+            for vote in option.votes:
+                if vote.user_id == current_user.id:
+                    return True
+        return False
+
+    # helper to count votes in poll
+    def vote_count(poll):
+        count = 0
+        for option in poll.options:
+            count += len(option.votes)
+        return count
+
+    # apply filter
+    if filt == 'unvoted':
+        polls = [p for p in polls if not has_voted(p)]
+    elif filt == 'own':
+        polls = [p for p in polls if p.creator_id == current_user.id]
+
+    # apply sort
+    if sort == 'votes':
+        polls.sort(key=vote_count, reverse=True)
+    elif sort == 'votes_asc':
+        polls.sort(key=vote_count)
+    elif sort == 'completed':
+        polls.sort(key=lambda p: has_voted(p), reverse=True)
+
+    # serialize result
+    result = []
+    for p in polls:
+        opts = []
+        for o in p.options:
+            opts.append({
+                'option_id': o.option_id,
+                'option_text': o.option_text,
+                'votes': len(o.votes)
             })
         result.append({
-            'poll_id': poll.poll_id,
-            'question': poll.question,
-            'options': options
+            'poll_id': p.poll_id,
+            'question': p.question,
+            'options': opts
         })
     return jsonify(result), 200
 
-# get polls that the current user hasn't voted in
-# we are not sure yet were in the app this will be, probably in some kind of home feed
-@app.route('/polls/unvoted', methods=['GET'])
-@login_required
-def unvoted_polls():
-    polls = Poll.query.all()
-    result = []
-
-    for poll in polls:
-        vote = Vote.query.filter_by(poll_id=poll.poll_id, user_id=current_user.id).first()
-        if not vote:
-            options = []
-            for option in poll.options:
-                vote_count = len(option.votes)
-                options.append({
-                    'option_id': option.option_id,
-                    'option_text': option.option_text,
-                    'votes': vote_count
-                })
-            result.append({
-                'poll_id': poll.poll_id,
-                'question': poll.question,
-                'options': options
-            })
-
-    return jsonify(result), 200
-
 # error handlers, just returns json error messages
-# lab assistant told us we needed these in a lab...
+# lab assistant told us we needed these in a lab
 @app.errorhandler(405)
 def method_not_allowed(error):
     return jsonify({'message': 'method not allowed'}), 405
