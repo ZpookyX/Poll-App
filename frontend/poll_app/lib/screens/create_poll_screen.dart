@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api.dart';
+import 'package:go_router/go_router.dart';
 
 class CreatePollScreen extends StatefulWidget {
   const CreatePollScreen({super.key});
@@ -27,9 +28,8 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
             const Spacer(),
             ElevatedButton(
               onPressed: () async {
-                final pollId = await createPoll(
-                    _q.text, [_opt1.text, _opt2.text]);
-                if (context.mounted) Navigator.pop(ctx, pollId);
+                final pollId = await createPoll(_q.text, [_opt1.text, _opt2.text]);
+                if (context.mounted) context.pop(pollId);
               },
               child: const Text('Create'),
             ),

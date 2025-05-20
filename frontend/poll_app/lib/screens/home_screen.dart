@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api.dart';
 import '../models/poll.dart';
-import 'create_poll_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
-          final created = await Navigator.push<int>(
-              ctx, MaterialPageRoute(builder: (_) => const CreatePollScreen()));
+          final created = await context.push<int>('/create');
           if (created != null) {
             setState(() => _future = fetchUnvoted());
           }

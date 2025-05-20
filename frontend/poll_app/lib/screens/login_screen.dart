@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../main.dart' show Auth;
+import '../services/auth_provider.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<Auth>();
-
+    final auth = context.watch<AuthProvider>();
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Center(
@@ -17,7 +16,8 @@ class LoginScreen extends StatelessWidget {
             : ElevatedButton.icon(
           icon: const Icon(Icons.login),
           label: const Text('Sign in with Google'),
-          onPressed: () => context.read<Auth>().signIn(),
+          style: ElevatedButton.styleFrom(minimumSize: const Size(240, 50)),
+          onPressed: () => context.read<AuthProvider>().signIn(),
         ),
       ),
     );

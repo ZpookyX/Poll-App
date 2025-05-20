@@ -1,5 +1,6 @@
 import os
 import requests
+from datetime import timedelta
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, UniqueConstraint
@@ -23,6 +24,8 @@ CLIENT_IDS = [
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
+
 CORS(app,
      supports_credentials=True,
      origins=["http://localhost:5173"])
@@ -39,6 +42,13 @@ class User(db.Model, UserMixin):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
+
+# A function for checking if the user is logged in as well as user info
+@app.get('/whoami')
+def whoami():
+    if current_user.is_authenticated:
+        return jsonify(id=current_user.id, username=current_user.username)
+    return jsonify(id=None), 401
 
 class Poll(db.Model):
     __tablename__ = "poll"
@@ -97,7 +107,7 @@ def google_login():
             db.session.add(user)
             db.session.commit()
 
-        login_user(user)
+        login_user(user, remember=True)
         return jsonify(message='logged in',
                        user={'id': user.id, 'username': user.username}), 200
     except ValueError:

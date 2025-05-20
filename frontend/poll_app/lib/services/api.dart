@@ -1,15 +1,15 @@
+// === FILE: lib/services/api.dart ===
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:http/http.dart' as http;
-import 'package:http/browser_client.dart' show BrowserClient;
 import '../models/poll.dart';
 
-const _base = kIsWeb ? 'http://localhost:5080'   // Flutter Web
-    : 'http://10.0.2.2:5080';   // Android-emulator
+// Conditional import for correct client (IOS/ANDROID or WEB)
+import 'stub_login.dart'
+if (dart.library.html) 'web_login.dart';
 
-final _client = kIsWeb
-    ? (BrowserClient()..withCredentials = true)   // carry cookies
-    : http.Client();
+final _client = createClient();
+
+const _base = kIsWeb ? 'http://localhost:5080' : 'http://10.0.2.2:5080';
 
 Future<bool> sendAuthToBackend({String? idToken, String? accessToken}) async {
   final body = idToken != null
@@ -38,4 +38,10 @@ Future<List<Poll>> fetchUnvoted() async {
       Uri.parse('$_base/polls?filter=unvoted'));
   final list = jsonDecode(res.body) as List;
   return list.map((e) => Poll.fromJson(e)).toList();
+}
+
+// Function to make sure the user is logged in
+Future<Map<String,dynamic>?> fetchSessionUser() async {
+  final res = await _client.get(Uri.parse('$_base/whoami'));
+  return res.statusCode == 200 ? jsonDecode(res.body) : null;
 }
