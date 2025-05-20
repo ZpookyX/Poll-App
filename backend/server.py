@@ -122,7 +122,7 @@ def logout():
 
 @login_manager.user_loader
 def load_user(uid):
-    return User.Session.get(int(uid))
+    return User.query.get(int(uid))
 
 # ---------------------- poll endpoints (unchanged) ----------------------
 @app.route('/polls', methods=['POST'])
@@ -136,7 +136,7 @@ def create_poll():
 
     new_poll = Poll(question=data['question'],
                     creator_id=current_user.id,
-                    timeleft=datetime.utcnow() + timedelta(hours=12)) # Hard coded for now
+                    timeleft=datetime.now() + timedelta(hours=12)) # Hard coded for now
     db.session.add(new_poll)
     db.session.flush()
 
