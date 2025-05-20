@@ -16,7 +16,15 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-      appBar: AppBar(title: const Text('New poll')),
+      appBar: AppBar(
+        title: const Text('New poll'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/'); // Go back to the previous screen
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

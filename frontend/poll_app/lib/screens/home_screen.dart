@@ -37,15 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () async {
-          final created = await context.push<int>('/create');
-          if (created != null) {
-            setState(() => _future = fetchUnvoted());
-          }
-        },
-      ),
     );
   }
 }
