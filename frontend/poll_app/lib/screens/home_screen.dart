@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api.dart';
 import '../models/poll.dart';
+import '../widgets/poll_list.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,19 +22,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Unvoted polls')),
+      appBar: AppBar(title: const Text('Polls', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))),
       body: FutureBuilder(
         future: _future,
-        builder: (ctx, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        builder: (_, snap) {
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
           final polls = snap.data!;
-          if (polls.isEmpty) return const Center(child: Text('Nothing left to vote'));
-          return ListView.builder(
-            itemCount: polls.length,
-            itemBuilder: (_, i) => ListTile(
-              title: Text(polls[i].q),
-              subtitle: Text('${polls[i].options.length} options'),
-            ),
+          if (polls.isEmpty) {
+            return const Center(child: Text('Nothing left to vote'));
+          }
+          return PollList(
+            polls: polls,
+            onTap: (p) => context.push('/poll/${p.id}'),
           );
         },
       ),
@@ -41,9 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add),
         onPressed: () async {
           final created = await context.push<int>('/create');
-          if (created != null) {
-            setState(() => _future = fetchUnvoted());
-          }
+          if (created != null) setState(() => _future = fetchUnvoted());
         },
       ),
     );

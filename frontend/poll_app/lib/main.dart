@@ -16,7 +16,8 @@ class PollApp extends StatelessWidget {
     final auth = context.watch<AuthProvider>();
     return MaterialApp.router(
       title: 'Polls',
-      theme: ThemeData(useMaterial3: true),
+      theme: ThemeData.dark(useMaterial3: true),
+      themeMode: ThemeMode.dark,
       routerConfig: createRouter(auth),
     );
   }

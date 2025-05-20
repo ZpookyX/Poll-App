@@ -1,4 +1,3 @@
-// === FILE: lib/routes/app_router.dart ===
 import 'package:go_router/go_router.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';

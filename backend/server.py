@@ -1,6 +1,6 @@
 import os
 import requests
-from datetime import timedelta
+from datetime import timedelta, datetime
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, UniqueConstraint
@@ -55,6 +55,7 @@ class Poll(db.Model):
     poll_id: Mapped[int] = mapped_column(primary_key=True)
     question: Mapped[str] = mapped_column(nullable=False)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    timeleft: Mapped[datetime] = mapped_column(nullable=False)
     options: Mapped[list["PollOption"]] = relationship(
         "PollOption", back_populates="poll", cascade="all, delete-orphan")
 
@@ -121,7 +122,7 @@ def logout():
 
 @login_manager.user_loader
 def load_user(uid):
-    return User.query.get(int(uid))
+    return User.Session.get(int(uid))
 
 # ---------------------- poll endpoints (unchanged) ----------------------
 @app.route('/polls', methods=['POST'])
@@ -133,7 +134,9 @@ def create_poll():
     if not isinstance(data['options'], list) or len(data['options']) < 2:
         return jsonify({'message': 'at least two options are required'}), 400
 
-    new_poll = Poll(question=data['question'], creator_id=current_user.id)
+    new_poll = Poll(question=data['question'],
+                    creator_id=current_user.id,
+                    timeleft=datetime.utcnow() + timedelta(hours=12)) # Hard coded for now
     db.session.add(new_poll)
     db.session.flush()
 
@@ -178,6 +181,7 @@ def vote_poll(poll_id):
                                         poll_id=poll_id).first()
     if not option:
         return jsonify({'message': 'option not found'}), 404
+        return jsonify({'message': 'option not found'}), 404
     if Vote.query.filter_by(poll_id=poll_id, user_id=current_user.id).first():
         return jsonify({'message': 'already voted'}), 400
     db.session.add(Vote(poll_id=poll_id,
@@ -214,7 +218,10 @@ def list_polls():
             'question': p.question,
             'options': [{'option_id': o.option_id,
                          'option_text': o.option_text,
-                         'votes': len(o.votes)} for o in p.options]} for p in polls]
+                         'votes': len(o.votes)
+            } for o in p.options],
+            'timeleft': p.timeleft.isoformat()
+    } for p in polls]
     return jsonify(res), 200
 
 # ---------------------- errors & debug ----------------------
