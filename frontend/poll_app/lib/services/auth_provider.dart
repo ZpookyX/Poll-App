@@ -26,19 +26,18 @@ class AuthProvider extends ChangeNotifier {
   GoogleSignInAccount? _user;
   bool get isLoggedIn => _user != null;
 
-  bool _ready = false;                               // true when auth known
+  bool _ready = false;
   bool get ready => _ready;
 
   bool _busy = false;
   bool get busy => _busy;
 
-  // ---------- first run: restore session or silent Google sign-in ----------
   Future<void> _init() async {
-    final u = await fetchSessionUser();               // calls /whoami once
+    final u = await fetchSessionUser();
     if (u != null) {
-      _user = _PlaceholderGoogleUser(u['username']);  // cookie OK
+      _user = _PlaceholderGoogleUser(u['username']);
     } else {
-      await _gsi.signInSilently().then(_update);      // Google cache fallback
+      await _gsi.signInSilently().then(_update);
     }
     _ready = true;
     notifyListeners();
