@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/create_poll_screen.dart';
+import '../screens/poll_screen.dart';
 import '../services/auth_provider.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../screens/settings_screen.dart';
@@ -37,6 +38,14 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
     ),
 
     GoRoute(path: '/create', builder: (_, __) => const CreatePollScreen()),
+    GoRoute(
+      path: '/poll/:id',
+      builder: (context, state) {
+        final pollId = state.pathParameters['id']!;
+        final fromCreate = state.uri.queryParameters['fromCreate'] == 'true';
+        return PollScreen(pollId: pollId, fromCreate: fromCreate);
+      },
+    ),
   ],
 );
 

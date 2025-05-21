@@ -46,7 +46,7 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
         title: const Text('New poll'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+          onPressed: () => context.pop(),
         ),
       ),
       body: Padding(
@@ -103,18 +103,21 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
             // Create button
             ElevatedButton(
               onPressed: () async {
+                final localContext = context;
                 final question = _q.text.trim();
                 final options = _optionControllers.map((c) => c.text.trim()).where((s) => s.isNotEmpty).toList();
 
                 if (question.isEmpty || options.length < 2) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  ScaffoldMessenger.of(localContext).showSnackBar(
                     const SnackBar(content: Text('Enter a question and at least two options')),
                   );
                   return;
                 }
 
                 final pollId = await createPoll(question, options);
-                if (context.mounted) context.go('/');
+                if (localContext.mounted) {
+                  localContext.push('/poll/$pollId?fromCreate=true');
+                }
               },
               child: const Text('Create'),
             ),

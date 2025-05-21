@@ -148,15 +148,24 @@ def create_poll():
 
 @app.route('/polls/<poll_id>', methods=['GET'])
 def retrieve_poll(poll_id):
+    try:
+        poll_id = int(poll_id)  # Convert poll_id string to integer
+    except ValueError:
+        return jsonify({'message': 'invalid poll id'}), 400
+
     poll = Poll.query.get(poll_id)
     if not poll:
         return jsonify({'message': 'poll not found'}), 404
+
     opts = [{'option_id': o.option_id,
              'option_text': o.option_text,
              'votes': len(o.votes)} for o in poll.options]
+
     return jsonify({'poll_id': poll.poll_id,
                     'question': poll.question,
-                    'options': opts}), 200
+                    'options': opts,
+                    'timeleft': poll.timeleft.isoformat()}), 200
+
 
 @app.route('/polls/<poll_id>', methods=['DELETE'])
 @login_required
@@ -181,7 +190,6 @@ def vote_poll(poll_id):
                                         poll_id=poll_id).first()
     if not option:
         return jsonify({'message': 'option not found'}), 404
-        return jsonify({'message': 'option not found'}), 404
     if Vote.query.filter_by(poll_id=poll_id, user_id=current_user.id).first():
         return jsonify({'message': 'already voted'}), 400
     db.session.add(Vote(poll_id=poll_id,
@@ -189,6 +197,17 @@ def vote_poll(poll_id):
                         user_id=current_user.id))
     db.session.commit()
     return jsonify({'message': 'vote recorded'}), 200
+
+@app.route('/polls/<poll_id>/has_voted', methods=['GET'])
+@login_required
+def has_voted(poll_id):
+    try:
+        poll_id = int(poll_id)
+    except ValueError:
+        return jsonify({'message': 'invalid poll id'}), 400
+
+    voted = Vote.query.filter_by(poll_id=poll_id, user_id=current_user.id).first()
+    return jsonify({'voted': voted is not None}), 200
 
 @app.route('/polls', methods=['GET'])
 @login_required
