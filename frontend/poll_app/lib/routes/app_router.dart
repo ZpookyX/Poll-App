@@ -9,6 +9,12 @@ import '../widgets/bottom_nav_bar.dart';
 import '../screens/settings_screen.dart';
 import '../screens/profile_screen.dart';
 
+GoRouter? _router;
+
+GoRouter initRouterOnce(AuthProvider auth) {
+  _router ??= createRouter(auth);
+  return _router!;
+}
 
 GoRouter createRouter(AuthProvider auth) => GoRouter(
   initialLocation: '/',

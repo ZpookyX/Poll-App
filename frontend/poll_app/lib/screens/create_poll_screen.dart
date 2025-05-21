@@ -46,7 +46,7 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
         title: const Text('New poll'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go('/'),
         ),
       ),
       body: Padding(
@@ -116,7 +116,7 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
 
                 final pollId = await createPoll(question, options);
                 if (localContext.mounted) {
-                  localContext.push('/poll/$pollId?fromCreate=true');
+                  localContext.go('/poll/$pollId?fromCreate=true');
                 }
               },
               child: const Text('Create'),
