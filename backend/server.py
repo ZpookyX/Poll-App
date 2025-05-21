@@ -48,6 +48,11 @@ class User(db.Model, UserMixin):
     comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="author", cascade="all, delete-orphan")
     liked_comments: Mapped[list["CommentLike"]] = relationship("CommentLike", back_populates="user", cascade="all, delete-orphan")
 
+    following: Mapped[list["Follow"]] = relationship(
+        "Follow", foreign_keys="[Follow.follower_id]", back_populates="follower", cascade="all, delete-orphan")
+    followers: Mapped[list["Follow"]] = relationship(
+        "Follow", foreign_keys="[Follow.followed_id]", back_populates="followed", cascade="all, delete-orphan")
+
 # A function for checking if the user is logged in as well as user info
 @app.get('/whoami')
 def whoami():
@@ -93,7 +98,7 @@ class Comment(db.Model):
     comment_id: Mapped[int] = mapped_column(primary_key=True)
     comment_text: Mapped[str] = mapped_column(nullable=False)
     author_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
-    like_count: Mapped[int] = mapped_column(nullalble=True, default=0)
+    like_count: Mapped[int] = mapped_column(nullable=True, default=0)
 
     # The comment is either on a poll or another comment. This constraint is checked below
     poll_id: Mapped[int] = mapped_column(ForeignKey("poll.poll_id"), nullable=True)
