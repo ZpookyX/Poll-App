@@ -1,7 +1,7 @@
 import os
 
 import requests
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, UTC
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, UniqueConstraint, CheckConstraint
@@ -117,6 +117,7 @@ class Comment(db.Model):
     comment_text: Mapped[str] = mapped_column(nullable=False)
     author_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     like_count: Mapped[int] = mapped_column(nullable=True, default=0)
+    post_time: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC), nullable=False)
 
     # The comment is either on a poll or another comment. This constraint is checked below
     poll_id: Mapped[int] = mapped_column(ForeignKey("poll.poll_id"), nullable=True)
@@ -211,7 +212,7 @@ def logout():
 
 @login_manager.user_loader
 def load_user(uid):
-    return User.query.get(int(uid))
+    return db.session.get(User, int(uid))
 
 # ---------------------- poll endpoints ----------------------
 @app.route('/polls', methods=['POST'])
@@ -390,7 +391,6 @@ def comment_poll(poll_id):
     db.session.commit()
     return jsonify({'comment_id': comment.comment_id}), 201
 
-
 @app.route('/comments/<int:parent_id>/replies', methods=['POST'])
 @login_required
 def reply_comment(parent_id):
@@ -408,6 +408,28 @@ def reply_comment(parent_id):
     db.session.add(comment)
     db.session.commit()
     return jsonify({'comment_id': comment.comment_id}), 201
+
+@app.route('/polls/<int:poll_id>/comments', methods=['GET'])
+def retrieve_poll_comments(poll_id):
+    poll = Poll.query.get(poll_id)
+    if not poll:
+        return jsonify({'message': 'poll not found'}), 404
+
+    liked_ids = set()
+    if current_user.is_authenticated:
+        liked_ids = {l.comment_id for l in current_user.liked_comments}
+
+    res = [{
+        'comment_id': c.comment_id,
+        'comment_text': c.comment_text,
+        'author_id': c.author_id,
+        'author_username': c.author.username,
+        'like_count': len(c.likes),
+        'post_time': c.post_time.isoformat(),
+        'liked_by_user': c.comment_id in liked_ids
+    } for c in poll.comments]
+
+    return jsonify(res), 200
 
 
 # ---------------------- like endpoints ----------------------
