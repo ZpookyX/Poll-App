@@ -29,7 +29,7 @@ Future<int> createPoll(String q, List<String> opts) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'question': q, 'options': opts}),
   );
-  if (res.statusCode != 200) throw Exception('createPoll ${res.statusCode}');
+  if (res.statusCode != 201) throw Exception('createPoll ${res.statusCode}');
   return jsonDecode(res.body)['poll_id'];
 }
 
@@ -40,7 +40,17 @@ Future<List<Poll>> fetchUnvoted() async {
   return list.map((e) => Poll.fromJson(e)).toList();
 }
 
-// Function to make sure the user is logged in
+Future<List<Poll>> fetchInteractedPolls({int? userId}) async {
+  final filter = userId != null
+      ? 'filter=interacted&user_id=$userId'
+      : 'filter=interacted';
+
+  final res = await _client.get(Uri.parse('$_base/polls?$filter'));
+  final list = jsonDecode(res.body) as List;
+  return list.map((e) => Poll.fromJson(e)).toList();
+}
+
+// Function to make sure the user is logged in and also retrieve all user info
 Future<Map<String,dynamic>?> fetchSessionUser() async {
   final res = await _client.get(Uri.parse('$_base/whoami'));
   return res.statusCode == 200 ? jsonDecode(res.body) : null;
@@ -50,6 +60,18 @@ Future<Poll> fetchPoll(String pollId) async {
   final res = await _client.get(Uri.parse('$_base/polls/$pollId'));
   if (res.statusCode != 200) throw Exception('Poll not found');
   return Poll.fromJson(jsonDecode(res.body));
+}
+
+// Instead of fetchOwnPolls its not just a general user fetch that defaults to current_user
+Future<List<Poll>> fetchUserPolls({int? userId}) async {
+  final whichUser = userId != null
+      ? 'filter=by_user&user_id=$userId'
+      : 'filter=by_user';
+
+  final response = await _client.get(Uri.parse('$_base/polls?$whichUser'));
+
+  final pollListJson = jsonDecode(response.body) as List;
+  return pollListJson.map((json) => Poll.fromJson(json)).toList();
 }
 
 Future<bool> votePoll(String pollId, int optionId) async {
@@ -68,19 +90,6 @@ Future<bool> hasUserVoted(String pollId) async {
   return data['voted'] ?? false;
 }
 
-Future<List<Poll>> fetchOwnPolls() async {
-  final res = await _client.get(Uri.parse('$_base/polls?filter=own'));
-  final list = jsonDecode(res.body) as List;
-  return list.map((e) => Poll.fromJson(e)).toList();
-}
-
-Future<List<Poll>> fetchInteractedPolls() async {
-  final res = await _client.get(Uri.parse('$_base/polls/interacted'));
-  final list = jsonDecode(res.body) as List;
-  return list.map((e) => Poll.fromJson(e)).toList();
-}
-
-
 Future<String> commentPoll(String pollId, String commentText) async {
   final res = await _client.post(
     Uri.parse('$_base/polls/$pollId/comments'),
@@ -89,4 +98,27 @@ Future<String> commentPoll(String pollId, String commentText) async {
   );
   if (res.statusCode != 201) throw Exception('Failed to post comment');
   return jsonDecode(res.body)['comment_id'].toString();
+}
+
+Future<Map<String, dynamic>?> fetchUserInfo(int userId) async {
+  final res = await _client.get(Uri.parse('$_base/users/$userId'));
+  if (res.statusCode != 200) return null;
+  return jsonDecode(res.body);
+}
+
+Future<bool> checkIfFollowing(int userId) async {
+  final res = await _client.get(Uri.parse('$_base/users/$userId/following_status'));
+  if (res.statusCode == 200) {
+    final data = jsonDecode(res.body);
+    return data['is_following'] ?? false;
+  }
+  return false;
+}
+
+Future<void> followUser(int userId) async {
+  await _client.post(Uri.parse('$_base/users/$userId/follow'));
+}
+
+Future<void> unfollowUser(int userId) async {
+  await _client.delete(Uri.parse('$_base/users/$userId/follow'));
 }

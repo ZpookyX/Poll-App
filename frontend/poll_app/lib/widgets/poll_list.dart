@@ -6,11 +6,14 @@ import '../provider/profile_provider.dart';
 import '../services/api.dart';
 
 class PollList extends StatelessWidget {
-  const PollList.own({super.key}) : _source = _PollListSource.own;
-  const PollList.interacted({super.key}) : _source = _PollListSource.interacted;
-  const PollList.unvoted({super.key}) : _source = _PollListSource.unvoted;
+  const PollList.user({super.key, this.userId}) : _source = _PollListSource.user;
+  const PollList.interacted({super.key, this.userId}) : _source = _PollListSource.interacted;
+  const PollList.unvoted({super.key})
+      : _source = _PollListSource.unvoted,
+        userId = null;
 
   final _PollListSource _source;
+  final int? userId;
 
   static const _palette = [
     Color(0xFF262626),
@@ -35,8 +38,8 @@ class PollList extends StatelessWidget {
     }
 
     final provider = context.watch<ProfileProvider>();
-    final polls = _source == _PollListSource.own
-        ? provider.ownPolls
+    final polls = _source == _PollListSource.user
+        ? provider.userPolls
         : provider.interactedPolls;
 
     return _buildList(context, polls);
@@ -50,14 +53,14 @@ class PollList extends StatelessWidget {
         return _PollCard(
           poll: poll,
           color: _palette[index % _palette.length],
-          onTap: () => context.go('/poll/${poll.id}'),
+          onTap: () => context.push('/poll/${poll.id}'),
         );
       },
     );
   }
 }
 
-enum _PollListSource { own, interacted, unvoted }
+enum _PollListSource { user, interacted, unvoted }
 
 class _PollCard extends StatelessWidget {
   const _PollCard({

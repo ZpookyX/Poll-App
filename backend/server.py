@@ -57,8 +57,26 @@ class User(db.Model, UserMixin):
 @app.get('/whoami')
 def whoami():
     if current_user.is_authenticated:
-        return jsonify(id=current_user.id, username=current_user.username)
+        return jsonify(
+            id=current_user.id,
+            username=current_user.username,
+            followers=len(current_user.followers),
+            following=len(current_user.following),
+        )
     return jsonify(id=None), 401
+
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user_info(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'user not found'}), 404
+
+    return jsonify({
+        'id': user.id,
+        'username': user.username,
+        'followers': len(user.followers),
+        'following': len(user.following),
+    }), 200
 
 class Poll(db.Model):
     __tablename__ = "poll"
@@ -220,36 +238,73 @@ def create_poll():
 @app.route('/polls', methods=['GET'])
 @login_required
 def list_polls():
-    filt = request.args.get('filter')
-    sort = request.args.get('sort')
-    polls = Poll.query.all()
+    filter_type = request.args.get('filter')
+    sort_type = request.args.get('sort')
+    user_id_arg = request.args.get('user_id')
 
-    def voted(p):
-        return any(v.user_id == current_user.id for o in p.options for v in o.votes)
-    def count(p):
-        return sum(len(o.votes) for o in p.options)
+    try:
+        target_user_id = int(user_id_arg) if user_id_arg else current_user.id
+    except ValueError:
+        return jsonify({'message': 'invalid user_id'}), 400
 
-    if filt == 'unvoted':
-        polls = [p for p in polls if not voted(p)]
-    elif filt == 'own':
-        polls = [p for p in polls if p.creator_id == current_user.id]
+    all_polls = Poll.query.all()
 
-    if sort == 'votes':
-        polls.sort(key=count, reverse=True)
-    elif sort == 'votes_asc':
-        polls.sort(key=count)
-    elif sort == 'completed':
-        polls.sort(key=voted, reverse=True)
+    def user_has_voted(poll):
+        for option in poll.options:
+            for vote in option.votes:
+                if vote.user_id == target_user_id:
+                    return True
+        return False
 
-    res = [{'poll_id': p.poll_id,
-            'question': p.question,
-            'options': [{'option_id': o.option_id,
-                         'option_text': o.option_text,
-                         'votes': len(o.votes)
-                         } for o in p.options],
-            'timeleft': p.timeleft.isoformat()
-            } for p in polls]
-    return jsonify(res), 200
+    def total_votes(poll):
+        total = 0
+        for option in poll.options:
+            total += len(option.votes)
+        return total
+
+    if filter_type == 'unvoted':
+        all_polls = [poll for poll in all_polls if not user_has_voted(poll)]
+    elif filter_type == 'user':
+        all_polls = [poll for poll in all_polls if poll.creator_id == target_user_id]
+    elif filter_type == 'interacted':
+        interacted = []
+        for poll in all_polls:
+            voted = False
+            commented = False
+            for option in poll.options:
+                for vote in option.votes:
+                    if vote.user_id == target_user_id:
+                        voted = True
+            for comment in poll.comments:
+                if comment.author_id == target_user_id:
+                    commented = True
+            if voted or commented:
+                interacted.append(poll)
+        all_polls = interacted
+
+    if sort_type == 'votes':
+        all_polls.sort(key=total_votes, reverse=True)
+    elif sort_type == 'votes_asc':
+        all_polls.sort(key=total_votes)
+    elif sort_type == 'completed':
+        all_polls.sort(key=user_has_voted, reverse=True)
+
+    response_data = []
+    for poll in all_polls:
+        response_data.append({
+            'poll_id': poll.poll_id,
+            'question': poll.question,
+            'options': [
+                {
+                    'option_id': option.option_id,
+                    'option_text': option.option_text,
+                    'votes': len(option.votes)
+                } for option in poll.options
+            ],
+            'timeleft': poll.timeleft.isoformat()
+        })
+
+    return jsonify(response_data), 200
 
 @app.route('/polls/<poll_id>', methods=['GET'])
 def retrieve_poll(poll_id):
@@ -262,13 +317,13 @@ def retrieve_poll(poll_id):
     if not poll:
         return jsonify({'message': 'poll not found'}), 404
 
-    opts = [{'option_id': o.option_id,
-             'option_text': o.option_text,
-             'votes': len(o.votes)} for o in poll.options]
+    options = [{'option_id': option.option_id,
+             'option_text': option.option_text,
+             'votes': len(option.votes)} for option in poll.options]
 
     return jsonify({'poll_id': poll.poll_id,
                     'question': poll.question,
-                    'options': opts,
+                    'options': options,
                     'timeleft': poll.timeleft.isoformat()}), 200
 
 
@@ -325,15 +380,15 @@ def comment_poll(poll_id):
     if not text:
         return jsonify({'message': 'comment_text is required'}), 400
 
-    c = Comment(
+    comment = Comment(
         comment_text=text,
         author_id=current_user.id,
         poll_id=poll_id,
         parent_comment_id=None
     )
-    db.session.add(c)
+    db.session.add(comment)
     db.session.commit()
-    return jsonify({'comment_id': c.comment_id}), 201
+    return jsonify({'comment_id': comment.comment_id}), 201
 
 
 @app.route('/comments/<int:parent_id>/replies', methods=['POST'])
@@ -344,53 +399,30 @@ def reply_comment(parent_id):
     if not text:
         return jsonify({'message': 'comment_text is required'}), 400
 
-    c = Comment(
+    comment = Comment(
         comment_text=text,
         author_id=current_user.id,
         poll_id=None,
         parent_comment_id=parent_id
     )
-    db.session.add(c)
+    db.session.add(comment)
     db.session.commit()
-    return jsonify({'comment_id': c.comment_id}), 201
-
-@app.route('/polls/interacted', methods=['GET'])
-@login_required
-def interacted_polls():
-    user_id = current_user.id
-
-    # Polls with user votes
-    voted_poll_ids = db.session.query(Vote.poll_id).filter_by(user_id=user_id).distinct()
-    # Polls with user comments
-    commented_poll_ids = db.session.query(Comment.poll_id).filter_by(author_id=user_id).distinct()
-
-    poll_ids = set([row[0] for row in voted_poll_ids.union(commented_poll_ids) if row[0] is not None])
-    polls = Poll.query.filter(Poll.poll_id.in_(poll_ids)).all()
-
-    def serialize(p):
-        return {
-            'poll_id': p.poll_id,
-            'question': p.question,
-            'options': [{'option_id': o.option_id, 'option_text': o.option_text, 'votes': len(o.votes)} for o in p.options],
-            'timeleft': p.timeleft.isoformat()
-        }
-
-    return jsonify([serialize(p) for p in polls])
+    return jsonify({'comment_id': comment.comment_id}), 201
 
 
 # ---------------------- like endpoints ----------------------
 
 @app.route('/comments/<int:cid>/like', methods=['POST'])
 @login_required
-def like_comment(cid):
-    c = Comment.query.get(cid)
-    if not c:
+def like_comment(comment_id):
+    comment = Comment.query.get(comment_id)
+    if not comment:
         return jsonify({'message': 'comment not found'}), 404
 
-    if any(l.user_id == current_user.id for l in c.likes):
+    if any(l.user_id == current_user.id for l in comment_id.likes):
         return jsonify({'message': 'already liked'}), 400
 
-    like = CommentLike(user_id=current_user.id, comment_id=cid)
+    like = CommentLike(user_id=current_user.id, comment_id=comment_id)
     c.likes.append(like)
     db.session.commit()
     return jsonify({'like_count': len(c.likes)}), 200
@@ -398,19 +430,19 @@ def like_comment(cid):
 
 @app.route('/comments/<int:cid>/like', methods=['DELETE'])
 @login_required
-def unlike_comment(cid):
-    c = Comment.query.get(cid)
-    if not c:
+def unlike_comment(comment_id):
+    comment = Comment.query.get(comment_id)
+    if not comment:
         return jsonify({'message': 'comment not found'}), 404
 
-    existing = next((l for l in c.likes if l.user_id == current_user.id), None)
+    existing = next((like for like in comment.likes if like.user_id == current_user.id), None)
     if not existing:
         return jsonify({'message': 'not liked'}), 400
 
-    c.likes.remove(existing)
+    comment.likes.remove(existing)
     db.session.delete(existing)
     db.session.commit()
-    return jsonify({'like_count': len(c.likes)}), 200
+    return jsonify({'like_count': len(comment.likes)}), 200
 
 
 # ---------------------- follow endpoints ----------------------
@@ -442,6 +474,15 @@ def unfollow_user(uid):
     db.session.delete(existing)
     db.session.commit()
     return jsonify({'unfollowed_id': uid}), 200
+
+@app.route('/users/<int:user_id>/following_status', methods=['GET'])
+@login_required
+def check_following_status(user_id):
+    if user_id == current_user.id:
+        return jsonify({'message': 'cannot follow yourself'}), 400
+
+    is_following = any(f.followed_id == user_id for f in current_user.following)
+    return jsonify({'is_following': is_following}), 200
 
 # ---------------------- errors & debug ----------------------
 @app.errorhandler(405)

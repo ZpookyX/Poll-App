@@ -9,7 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/frontend/poll_app/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/frontend/poll_app/build" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.13" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.13 (tddd80-2025-projekt)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />
     <orderEntry type="library" name="Dart Packages" level="project" />

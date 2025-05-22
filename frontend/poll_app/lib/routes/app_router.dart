@@ -40,6 +40,13 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
         GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
         GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
         GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+        GoRoute(
+          path: '/profile/:id',
+          builder: (context, state) {
+            final id = state.pathParameters['id'];
+            return ProfileScreen(userId: id == null ? null : int.tryParse(id));
+          },
+        ),
       ],
     ),
 
