@@ -29,7 +29,7 @@ Future<int> createPoll(String q, List<String> opts) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'question': q, 'options': opts}),
   );
-  if (res.statusCode != 200) throw Exception('createPoll ${res.statusCode}');
+  if (res.statusCode != 201) throw Exception('createPoll ${res.statusCode}');
   return jsonDecode(res.body)['poll_id'];
 }
 
@@ -66,4 +66,14 @@ Future<bool> hasUserVoted(String pollId) async {
   if (res.statusCode != 200) return false;
   final data = jsonDecode(res.body);
   return data['voted'] ?? false;
+}
+
+Future<String> commentPoll(String pollId, String commentText) async {
+  final res = await _client.post(
+    Uri.parse('$_base/polls/$pollId/comments'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'comment_text': commentText}),
+  );
+  if (res.statusCode != 201) throw Exception('Failed to post comment');
+  return jsonDecode(res.body)['comment_id'].toString();
 }

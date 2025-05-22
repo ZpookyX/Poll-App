@@ -32,7 +32,7 @@ class ThemeProvider extends ChangeNotifier {
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final index = prefs.getInt('themeMode') ?? 0;
+    final index = prefs.getInt('themeMode') ?? AppThemeMode.dark.index;
     _mode = AppThemeMode.values[index];
     notifyListeners();
   }
