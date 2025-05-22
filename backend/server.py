@@ -417,17 +417,17 @@ def retrieve_poll_comments(poll_id):
 
     liked_ids = set()
     if current_user.is_authenticated:
-        liked_ids = {l.comment_id for l in current_user.liked_comments}
+        liked_ids = {like.comment_id for like in current_user.liked_comments}
 
     res = [{
-        'comment_id': c.comment_id,
-        'comment_text': c.comment_text,
-        'author_id': c.author_id,
-        'author_username': c.author.username,
-        'like_count': len(c.likes),
-        'post_time': c.post_time.isoformat(),
-        'liked_by_user': c.comment_id in liked_ids
-    } for c in poll.comments]
+        'comment_id': comment.comment_id,
+        'comment_text': comment.comment_text,
+        'author_id': comment.author_id,
+        'author_username': comment.author.username,
+        'like_count': len(comment.likes),
+        'post_time': comment.post_time.isoformat(),
+        'liked_by_user': comment.comment_id in liked_ids
+    } for comment in poll.comments]
 
     return jsonify(res), 200
 
@@ -441,13 +441,13 @@ def like_comment(comment_id):
     if not comment:
         return jsonify({'message': 'comment not found'}), 404
 
-    if any(l.user_id == current_user.id for l in comment_id.likes):
+    if any(like.user_id == current_user.id for like in comment_id.likes):
         return jsonify({'message': 'already liked'}), 400
 
     like = CommentLike(user_id=current_user.id, comment_id=comment_id)
-    c.likes.append(like)
+    comment.likes.append(like)
     db.session.commit()
-    return jsonify({'like_count': len(c.likes)}), 200
+    return jsonify({'like_count': len(comment.likes)}), 200
 
 
 @app.route('/comments/<int:cid>/like', methods=['DELETE'])
@@ -476,7 +476,7 @@ def follow_user(uid):
     if uid == current_user.id:
         return jsonify({'message': "can't follow yourself"}), 400
 
-    if any(f.followed_id == uid for f in current_user.following):
+    if any(follow.followed_id == uid for follow in current_user.following):
         return jsonify({'message': 'already following'}), 400
 
     f = Follow(follower_id=current_user.id, followed_id=uid)
@@ -488,7 +488,7 @@ def follow_user(uid):
 @app.route('/users/<int:uid>/follow', methods=['DELETE'])
 @login_required
 def unfollow_user(uid):
-    existing = next((f for f in current_user.following if f.followed_id == uid), None)
+    existing = next((follow for follow in current_user.following if follow.followed_id == uid), None)
     if not existing:
         return jsonify({'message': 'not following'}), 400
 
@@ -503,7 +503,7 @@ def check_following_status(user_id):
     if user_id == current_user.id:
         return jsonify({'message': 'cannot follow yourself'}), 400
 
-    is_following = any(f.followed_id == user_id for f in current_user.following)
+    is_following = any(follow.followed_id == user_id for follow in current_user.following)
     return jsonify({'is_following': is_following}), 200
 
 # ---------------------- errors & debug ----------------------
