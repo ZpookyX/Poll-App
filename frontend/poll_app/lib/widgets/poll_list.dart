@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/poll.dart';
+import '../provider/profile_provider.dart';
+import '../services/api.dart';
 
 class PollList extends StatelessWidget {
-  const PollList({
-    super.key,
-    required this.polls,
-    required this.onTap,
-  });
+  const PollList.own({super.key}) : _source = _PollListSource.own;
+  const PollList.interacted({super.key}) : _source = _PollListSource.interacted;
+  const PollList.unvoted({super.key}) : _source = _PollListSource.unvoted;
 
-  final List<Poll> polls;
-  final void Function(Poll) onTap;
+  final _PollListSource _source;
 
   static const _palette = [
     Color(0xFF262626),
@@ -19,19 +20,45 @@ class PollList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_source == _PollListSource.unvoted) {
+      return FutureBuilder<List<Poll>>(
+        future: fetchUnvoted(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final polls = snapshot.data!;
+          if (polls.isEmpty) return const Center(child: Text('Nothing left to vote'));
+          return _buildList(context, polls);
+        },
+      );
+    }
+
+    final provider = context.watch<ProfileProvider>();
+    final polls = _source == _PollListSource.own
+        ? provider.ownPolls
+        : provider.interactedPolls;
+
+    return _buildList(context, polls);
+  }
+
+  Widget _buildList(BuildContext context, List<Poll> polls) {
     return ListView.builder(
       itemCount: polls.length,
-      itemBuilder: (_, i) => _PollCard(
-        poll: polls[i],
-        color: _palette[i % _palette.length],
-        onTap: () => onTap(polls[i]),
-      ),
+      itemBuilder: (context, index) {
+        final poll = polls[index];
+        return _PollCard(
+          poll: poll,
+          color: _palette[index % _palette.length],
+          onTap: () => context.go('/poll/${poll.id}'),
+        );
+      },
     );
   }
 }
 
-// ── private card used only inside the list ─────────────────────────────────
-// _PollCard – compact version with the “View” button on the right
+enum _PollListSource { own, interacted, unvoted }
+
 class _PollCard extends StatelessWidget {
   const _PollCard({
     required this.poll,
@@ -58,22 +85,19 @@ class _PollCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // question
             Text(
-              poll.q,
+              poll.question,
               style: Theme.of(context)
                   .textTheme
                   .titleLarge!
                   .copyWith(fontWeight: FontWeight.w600, color: Colors.white),
             ),
             const SizedBox(height: 6),
-            // time left
             Text(
-              poll.timeLeftString, // replace with real countdown once available
+              poll.timeLeftString,
               style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
             const SizedBox(height: 10),
-            // votes/status + button in one row
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -83,13 +107,11 @@ class _PollCard extends StatelessWidget {
                     children: [
                       Text(
                         '${poll.totalVotes} votes already',
-                        style:
-                        const TextStyle(color: Colors.white, fontSize: 14),
+                        style: const TextStyle(color: Colors.white, fontSize: 14),
                       ),
                       Text(
                         'You haven’t voted on this poll',
-                        style: const TextStyle(
-                            color: Colors.white70, fontSize: 14),
+                        style: const TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                     ],
                   ),
@@ -117,4 +139,3 @@ class _PollCard extends StatelessWidget {
     );
   }
 }
-

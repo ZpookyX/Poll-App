@@ -9,9 +9,9 @@ class Option {
 }
 
 class Poll {
-  Poll(this.id, this.q, this.options, this.timeleft);
+  Poll(this.id, this.question, this.options, this.timeleft);
   final int id;
-  final String q;
+  final String question;
   final List<Option> options;
   final DateTime timeleft;
 

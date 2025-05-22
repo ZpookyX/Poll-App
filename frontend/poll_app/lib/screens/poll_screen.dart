@@ -77,7 +77,7 @@ class _PollScreenState extends State<PollScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  poll.q,
+                  poll.question,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),

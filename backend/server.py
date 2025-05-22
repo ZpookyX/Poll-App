@@ -354,6 +354,29 @@ def reply_comment(parent_id):
     db.session.commit()
     return jsonify({'comment_id': c.comment_id}), 201
 
+@app.route('/polls/interacted', methods=['GET'])
+@login_required
+def interacted_polls():
+    user_id = current_user.id
+
+    # Polls with user votes
+    voted_poll_ids = db.session.query(Vote.poll_id).filter_by(user_id=user_id).distinct()
+    # Polls with user comments
+    commented_poll_ids = db.session.query(Comment.poll_id).filter_by(author_id=user_id).distinct()
+
+    poll_ids = set([row[0] for row in voted_poll_ids.union(commented_poll_ids) if row[0] is not None])
+    polls = Poll.query.filter(Poll.poll_id.in_(poll_ids)).all()
+
+    def serialize(p):
+        return {
+            'poll_id': p.poll_id,
+            'question': p.question,
+            'options': [{'option_id': o.option_id, 'option_text': o.option_text, 'votes': len(o.votes)} for o in p.options],
+            'timeleft': p.timeleft.isoformat()
+        }
+
+    return jsonify([serialize(p) for p in polls])
+
 
 # ---------------------- like endpoints ----------------------
 

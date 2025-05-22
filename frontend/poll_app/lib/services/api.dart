@@ -29,7 +29,7 @@ Future<int> createPoll(String q, List<String> opts) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'question': q, 'options': opts}),
   );
-  if (res.statusCode != 200) throw Exception('createPoll ${res.statusCode}');
+  if (res.statusCode != 201) throw Exception('createPoll ${res.statusCode}');
   return jsonDecode(res.body)['poll_id'];
 }
 
@@ -66,4 +66,16 @@ Future<bool> hasUserVoted(String pollId) async {
   if (res.statusCode != 200) return false;
   final data = jsonDecode(res.body);
   return data['voted'] ?? false;
+}
+
+Future<List<Poll>> fetchOwnPolls() async {
+  final res = await _client.get(Uri.parse('$_base/polls?filter=own'));
+  final list = jsonDecode(res.body) as List;
+  return list.map((e) => Poll.fromJson(e)).toList();
+}
+
+Future<List<Poll>> fetchInteractedPolls() async {
+  final res = await _client.get(Uri.parse('$_base/polls/interacted'));
+  final list = jsonDecode(res.body) as List;
+  return list.map((e) => Poll.fromJson(e)).toList();
 }

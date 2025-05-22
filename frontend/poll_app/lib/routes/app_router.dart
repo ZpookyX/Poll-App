@@ -4,7 +4,7 @@ import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/create_poll_screen.dart';
 import '../screens/poll_screen.dart';
-import '../services/auth_provider.dart';
+import '../provider/auth_provider.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../screens/settings_screen.dart';
 import '../screens/profile_screen.dart';

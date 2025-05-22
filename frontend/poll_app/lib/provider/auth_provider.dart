@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io';
-import 'api.dart';
+import '../services/api.dart';
 
 /// ---------------------------------------------------------------------------
 /// OAuth client-IDs (only Web & iOS need an explicit string)
