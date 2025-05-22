@@ -34,3 +34,20 @@ class Poll {
     DateTime.parse(j['timeleft']),
   );
 }
+
+class Comment {
+  Comment(this.commentId, this.commentText, this.authorId ,this.likeCount, this.postTime);
+  final int commentId;
+  final String commentText;
+  final int authorId;
+  final int likeCount;
+  final DateTime postTime;
+
+  factory Comment.fromJson(Map<String, dynamic> j) => Comment(
+    j['comment_id'],
+    j['comment_text'],
+    j['author_id'],
+    j['like_count'],
+    DateTime.parse(j['post_time']),
+  );
+}

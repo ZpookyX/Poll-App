@@ -29,7 +29,7 @@ Future<int> createPoll(String q, List<String> opts) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({'question': q, 'options': opts}),
   );
-  if (res.statusCode != 201) throw Exception('createPoll ${res.statusCode}');
+  if (res.statusCode != 200) throw Exception('createPoll ${res.statusCode}');
   return jsonDecode(res.body)['poll_id'];
 }
 
@@ -78,4 +78,15 @@ Future<List<Poll>> fetchInteractedPolls() async {
   final res = await _client.get(Uri.parse('$_base/polls/interacted'));
   final list = jsonDecode(res.body) as List;
   return list.map((e) => Poll.fromJson(e)).toList();
+}
+
+
+Future<String> commentPoll(String pollId, String commentText) async {
+  final res = await _client.post(
+    Uri.parse('$_base/polls/$pollId/comments'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'comment_text': commentText}),
+  );
+  if (res.statusCode != 201) throw Exception('Failed to post comment');
+  return jsonDecode(res.body)['comment_id'].toString();
 }

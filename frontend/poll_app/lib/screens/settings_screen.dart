@@ -16,7 +16,7 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Theme:", style: TextStyle(fontSize: 18)),
+            const Text("Appearance:", style: TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
             DropdownButton<AppThemeMode>(
               value: themeProvider.mode,
