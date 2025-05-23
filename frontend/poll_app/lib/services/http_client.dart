@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
+final CookieJar _cookieJar = CookieJar(); // simple in-memory cookie jar
+
 Dio createClient() {
   final baseUrl = Platform.isAndroid
       ? 'http://10.0.2.2:5080'
@@ -14,6 +16,6 @@ Dio createClient() {
     validateStatus: (status) => status != null && status < 500,
   ));
 
-  dio.interceptors.add(CookieManager(CookieJar()));
+  dio.interceptors.add(CookieManager(_cookieJar));
   return dio;
 }

@@ -9,6 +9,8 @@ import '../screens/profile_screen.dart';
 import '../provider/auth_provider.dart';
 import '../widgets/bottom_nav_bar.dart';
 
+final _shellNavKey = GlobalKey<NavigatorState>();
+
 GoRouter? _router;
 
 GoRouter initRouterOnce(AuthProvider auth) {
@@ -19,12 +21,22 @@ GoRouter initRouterOnce(AuthProvider auth) {
 GoRouter createRouter(AuthProvider auth) => GoRouter(
   initialLocation: '/',
   refreshListenable: auth,
+  redirect: (context, state) {
+    final loggedIn = auth.isLoggedIn;
+    final goingToLogin = state.uri.path == '/login';
+
+    if (!loggedIn && !goingToLogin) return '/login';
+    if (loggedIn && goingToLogin) return '/';
+
+    return null;
+  },
   routes: [
     GoRoute(
       path: '/login',
       builder: (_, __) => const LoginScreen(),
     ),
     ShellRoute(
+      navigatorKey: _shellNavKey,
       builder: (context, state, child) => Scaffold(
         body: child,
         bottomNavigationBar: BottomNavBar(
@@ -45,23 +57,20 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
         GoRoute(
           name: 'profile_self',
           path: '/profile',
-          pageBuilder: (context, state) => MaterialPage(
-            key: const ValueKey('profile_self'),
-            child: const ProfileScreen(),
-          ),
-        ),
-        GoRoute(
-          name: 'profile_detail',
-          path: '/profile/:id',
-          pageBuilder: (context, state) {
-            final id = int.tryParse(state.pathParameters['id']!);
-            return MaterialPage(
-              key: ValueKey('profile_detail_$id'),
-              child: ProfileScreen(userId: id),
-            );
-          },
+          builder: (_, __) => const ProfileScreen(),
         ),
       ],
+    ),
+    GoRoute(
+      name: 'profile_detail',
+      path: '/user/:id',
+      builder: (context, state) {
+        final id = int.tryParse(state.pathParameters['id']!);
+        return ProfileScreen(
+          key: ValueKey(state.uri.toString()),
+          userId: id,
+        );
+      },
     ),
     GoRoute(
       name: 'create',
@@ -79,6 +88,7 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
     ),
   ],
 );
+
 
 int _calculateIndex(String path) {
   if (path == '/') return 0;

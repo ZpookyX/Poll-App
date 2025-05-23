@@ -22,7 +22,7 @@ class CommentCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
-              onTap: () => context.push('/profile/${comment.authorId}'),
+              onTap: () => context.push('/user/${comment.authorId}'),
               child: Text(
                 comment.authorUsername,
                 style: const TextStyle(

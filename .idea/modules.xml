@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/backend/backend.iml" filepath="$PROJECT_DIR$/backend/backend.iml" />
-      <module fileurl="file://$PROJECT_DIR$/frontend/lib/lib.iml" filepath="$PROJECT_DIR$/frontend/lib/lib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/frontend/poll_app/android/app/src/debug/debug.iml" filepath="$PROJECT_DIR$/frontend/poll_app/android/app/src/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/frontend/poll_app/poll_app.iml" filepath="$PROJECT_DIR$/frontend/poll_app/poll_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/frontend/poll_app/android/app/src/profile/profile.iml" filepath="$PROJECT_DIR$/frontend/poll_app/android/app/src/profile/profile.iml" />
     </modules>
   </component>
 </project>

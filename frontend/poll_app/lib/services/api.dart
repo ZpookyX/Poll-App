@@ -9,7 +9,12 @@ Future<bool> sendAuthToBackend({String? idToken, String? accessToken}) async {
   final body = idToken != null
       ? {'id_token': idToken}
       : {'access_token': accessToken};
+
   final res = await _client.post('/login', data: body);
+
+  print('Login response code: ${res.statusCode}');
+  print('Login response body: ${res.data}');
+
   return res.statusCode == 200;
 }
 
@@ -56,14 +61,20 @@ Future<Poll> fetchPoll(String pollId) async {
 }
 
 Future<List<Poll>> fetchUserPolls({int? userId}) async {
-  final params = <String, dynamic>{'filter': 'by_user'};
+  final params = <String, dynamic>{'filter': 'user'};
   if (userId != null) params['user_id'] = userId;
 
   final res = await _client.get('/polls', queryParameters: params);
+
+  if (res.data is! List) {
+    throw Exception('Expected list from /polls but got: ${res.data}');
+  }
+
   return (res.data as List)
       .map((e) => Poll.fromJson(e as Map<String, dynamic>))
       .toList();
 }
+
 
 Future<bool> votePoll(String pollId, int optionId) async {
   final res = await _client.post(

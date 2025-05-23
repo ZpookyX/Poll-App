@@ -49,6 +49,7 @@ class AuthProvider extends ChangeNotifier {
         }
       }
     }
+
     _ready = true;
     notifyListeners();
   }
