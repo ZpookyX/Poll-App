@@ -2,6 +2,8 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../models/poll.dart';
+import '../models/comment.dart';
+
 
 // Conditional import for correct client (IOS/ANDROID or WEB)
 import 'stub_login.dart'
@@ -21,6 +23,10 @@ Future<bool> sendAuthToBackend({String? idToken, String? accessToken}) async {
     body: jsonEncode(body),
   );
   return res.statusCode == 200;
+}
+
+Future<void> logoutUser() async {
+  await _client.get(Uri.parse('$_base/logout'));
 }
 
 Future<int> createPoll(String q, List<String> opts) async {
@@ -98,6 +104,33 @@ Future<String> commentPoll(String pollId, String commentText) async {
   );
   if (res.statusCode != 201) throw Exception('Failed to post comment');
   return jsonDecode(res.body)['comment_id'].toString();
+}
+
+Future<List<Comment>> fetchComments(String pollId) async {
+  final res = await _client.get(Uri.parse('$_base/polls/$pollId/comments'));
+  if (res.statusCode != 200) throw Exception('Failed to load comments');
+  final list = jsonDecode(res.body) as List;
+  return list.map((e) => Comment.fromJson(e)).toList();
+}
+
+Future<void> likeComment(int commentId) async {
+  final res = await _client.post(
+    Uri.parse('$_base/comments/$commentId/like'),
+    headers: {'Content-Type': 'application/json'},
+  );
+  if (res.statusCode != 200) {
+    throw Exception('Failed to like comment');
+  }
+}
+
+Future<void> unlikeComment(int commentId) async {
+  final res = await _client.delete(
+    Uri.parse('$_base/comments/$commentId/like'),
+    headers: {'Content-Type': 'application/json'},
+  );
+  if (res.statusCode != 200) {
+    throw Exception('Failed to unlike comment');
+  }
 }
 
 Future<Map<String, dynamic>?> fetchUserInfo(int userId) async {

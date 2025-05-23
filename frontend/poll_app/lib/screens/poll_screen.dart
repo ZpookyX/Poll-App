@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/poll.dart';
 import '../services/api.dart';
+import '../provider/comment_provider.dart';
+import '../widgets/comment_card.dart';
 
 class PollScreen extends StatefulWidget {
   final String pollId;
@@ -14,6 +17,7 @@ class PollScreen extends StatefulWidget {
 
 class _PollScreenState extends State<PollScreen> {
   late Future<Poll> _pollFuture;
+  final _controller = TextEditingController();
   bool _hasVoted = false;
   int? _selectedOptionId;
 
@@ -22,7 +26,6 @@ class _PollScreenState extends State<PollScreen> {
     super.initState();
     _pollFuture = fetchPoll(widget.pollId);
     hasUserVoted(widget.pollId).then((voted) {
-      if (!mounted) return;
       setState(() => _hasVoted = voted);
     });
   }
@@ -33,7 +36,7 @@ class _PollScreenState extends State<PollScreen> {
 
     if (success) {
       setState(() {
-        _pollFuture = fetchPoll(widget.pollId); // Refresh data
+        _pollFuture = fetchPoll(widget.pollId);
         _hasVoted = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,50 +51,42 @@ class _PollScreenState extends State<PollScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Poll'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (widget.fromCreate) {
-              context.go('/'); // clear stack and go home
-            } else {
-              context.pop();   // normal back
-            }
-          },
+    return ChangeNotifierProvider(
+      create: (_) => CommentProvider(widget.pollId),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Poll'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => widget.fromCreate ? context.go('/') : context.pop(),
+          ),
         ),
-      ),
-      body: FutureBuilder<Poll>(
-        future: _pollFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (!snapshot.hasData) return const Center(child: Text('Poll not found'));
+        body: FutureBuilder<Poll>(
+          future: _pollFuture,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final poll = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            final poll = snapshot.data!;
+            final provider = context.watch<CommentProvider>();
+
+            return ListView(
+              padding: const EdgeInsets.all(16),
               children: [
                 Text(
                   poll.question,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
+
                 if (!_hasVoted) ...[
-                  ...poll.options.map(
-                        (opt) => RadioListTile<int>(
-                      title: Text(opt.text),
-                      value: opt.id,
-                      groupValue: _selectedOptionId,
-                      onChanged: (val) {
-                        setState(() => _selectedOptionId = val);
-                      },
-                    ),
-                  ),
+                  ...poll.options.map((opt) => RadioListTile<int>(
+                    title: Text(opt.text),
+                    value: opt.id,
+                    groupValue: _selectedOptionId,
+                    onChanged: (val) => setState(() => _selectedOptionId = val),
+                  )),
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _selectedOptionId == null
@@ -109,18 +104,42 @@ class _PollScreenState extends State<PollScreen> {
                     );
                   }),
                   const Divider(),
-                  const Text(
-                    'Comments (not implemented yet)',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  const Text('Add a comment', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          decoration: const InputDecoration(hintText: 'Type a comment...'),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          final text = _controller.text.trim();
+                          if (text.isNotEmpty) {
+                            context.read<CommentProvider>().postComment(text);
+                            _controller.clear();
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                  const Text('• Great poll!'),
-                  const Text('• I like this topic.'),
+                  const SizedBox(height: 10),
+                  if (provider.isLoading)
+                    const Center(child: CircularProgressIndicator()),
+
+                  ...provider.comments.map((c) => CommentCard(
+                    comment: c,
+                    onToggleLike: () => context.read<CommentProvider>().toggleLike(c.commentId),
+                  )),
                 ],
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
+

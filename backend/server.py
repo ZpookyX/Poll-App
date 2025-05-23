@@ -67,7 +67,7 @@ def whoami():
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user_info(user_id):
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({'message': 'user not found'}), 404
 
@@ -314,7 +314,7 @@ def retrieve_poll(poll_id):
     except ValueError:
         return jsonify({'message': 'invalid poll id'}), 400
 
-    poll = Poll.query.get(poll_id)
+    poll = db.session.get(Poll, poll_id)
     if not poll:
         return jsonify({'message': 'poll not found'}), 404
 
@@ -331,7 +331,7 @@ def retrieve_poll(poll_id):
 @app.route('/polls/<poll_id>', methods=['DELETE'])
 @login_required
 def remove_poll(poll_id):
-    poll = Poll.query.get(poll_id)
+    poll = db.session.get(Poll, poll_id)
     if not poll:
         return jsonify({'message': "poll not found"}), 404
     votes = sum(len(o.votes) for o in poll.options)
@@ -411,7 +411,7 @@ def reply_comment(parent_id):
 
 @app.route('/polls/<int:poll_id>/comments', methods=['GET'])
 def retrieve_poll_comments(poll_id):
-    poll = Poll.query.get(poll_id)
+    poll = db.session.get(Poll, poll_id)
     if not poll:
         return jsonify({'message': 'poll not found'}), 404
 
@@ -434,14 +434,14 @@ def retrieve_poll_comments(poll_id):
 
 # ---------------------- like endpoints ----------------------
 
-@app.route('/comments/<int:cid>/like', methods=['POST'])
+@app.route('/comments/<int:comment_id>/like', methods=['POST'])
 @login_required
 def like_comment(comment_id):
-    comment = Comment.query.get(comment_id)
+    comment = db.session.get(Comment, comment_id)
     if not comment:
         return jsonify({'message': 'comment not found'}), 404
 
-    if any(like.user_id == current_user.id for like in comment_id.likes):
+    if any(like.user_id == current_user.id for like in comment.likes):
         return jsonify({'message': 'already liked'}), 400
 
     like = CommentLike(user_id=current_user.id, comment_id=comment_id)
@@ -450,10 +450,10 @@ def like_comment(comment_id):
     return jsonify({'like_count': len(comment.likes)}), 200
 
 
-@app.route('/comments/<int:cid>/like', methods=['DELETE'])
+@app.route('/comments/<int:comment_id>/like', methods=['DELETE'])
 @login_required
 def unlike_comment(comment_id):
-    comment = Comment.query.get(comment_id)
+    comment = db.session.get(Comment, comment_id)
     if not comment:
         return jsonify({'message': 'comment not found'}), 404
 
@@ -472,7 +472,6 @@ def unlike_comment(comment_id):
 @app.route('/users/<int:uid>/follow', methods=['POST'])
 @login_required
 def follow_user(uid):
-    # no JSON body expected, so no get_json here
     if uid == current_user.id:
         return jsonify({'message': "can't follow yourself"}), 400
 
@@ -505,6 +504,12 @@ def check_following_status(user_id):
 
     is_following = any(follow.followed_id == user_id for follow in current_user.following)
     return jsonify({'is_following': is_following}), 200
+
+@app.route('/users/me/following', methods=['GET'])
+@login_required
+def list_my_following():
+    followed_ids = [follow.followed_id for follow in current_user.following]
+    return jsonify(followed_ids), 200
 
 # ---------------------- errors & debug ----------------------
 @app.errorhandler(405)

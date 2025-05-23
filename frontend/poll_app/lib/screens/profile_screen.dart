@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/profile_provider.dart';
 import '../widgets/poll_list.dart';
+import '../services/api.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
   final int? userId; // null means current user
@@ -29,7 +31,13 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     final provider = context.watch<ProfileProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        leading: isOwnProfile ? null : IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
@@ -50,8 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                     children: [
                       Text(
                         provider.username ?? '',
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 4),
                       Text('Followers: ${provider.followers ?? '—'}'),
@@ -69,6 +76,16 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                         profile.isFollowingOtherUser == true ? 'Unfollow' : 'Follow',
                       ),
                     ),
+                  ),
+                if (isOwnProfile)
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'Log out',
+                    onPressed: () async {
+                      await logoutUser();
+                      if (!context.mounted) return;
+                      context.go('/login');
+                    },
                   ),
               ],
             ),

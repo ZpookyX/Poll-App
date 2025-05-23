@@ -1,12 +1,4 @@
-class Option {
-  Option(this.id, this.text, this.votes);
-  final int id;
-  final String text;
-  final int votes;
-
-  factory Option.fromJson(Map<String, dynamic> j) =>
-      Option(j['option_id'], j['option_text'], j['votes']);
-}
+import 'option.dart';
 
 class Poll {
   Poll(this.id, this.question, this.options, this.timeleft);
@@ -32,22 +24,5 @@ class Poll {
     j['question'],
     (j['options'] as List).map((o) => Option.fromJson(o)).toList(),
     DateTime.parse(j['timeleft']),
-  );
-}
-
-class Comment {
-  Comment(this.commentId, this.commentText, this.authorId ,this.likeCount, this.postTime);
-  final int commentId;
-  final String commentText;
-  final int authorId;
-  final int likeCount;
-  final DateTime postTime;
-
-  factory Comment.fromJson(Map<String, dynamic> j) => Comment(
-    j['comment_id'],
-    j['comment_text'],
-    j['author_id'],
-    j['like_count'],
-    DateTime.parse(j['post_time']),
   );
 }
