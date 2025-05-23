@@ -6,7 +6,7 @@ import '../services/api.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final int? userId; // null means current user
+  final int? userId; // null means current userr
 
   const ProfileScreen({super.key, this.userId});
 
