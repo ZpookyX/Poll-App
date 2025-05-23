@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../provider/auth_provider.dart';
 import '../provider/profile_provider.dart';
 import '../widgets/poll_list.dart';
 import '../services/api.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final int? userId; // null means current userr
+  final int? userId; // null means current user
 
   const ProfileScreen({super.key, this.userId});
 
@@ -24,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProfileProvider>().loadUserProfile();
+      context.read<ProfileProvider>().loadUserProfile(userId: widget.userId);
     });
   }
 
@@ -84,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                     icon: const Icon(Icons.logout),
                     tooltip: 'Log out',
                     onPressed: () async {
-                      await logoutUser();
+                      await context.read<AuthProvider>().signOut();
                       if (!context.mounted) return;
                       context.go('/login');
                     },

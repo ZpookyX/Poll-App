@@ -1,11 +1,12 @@
 import 'option.dart';
-
 class Poll {
-  Poll(this.id, this.question, this.options, this.timeleft);
+  Poll(this.id, this.question, this.options, this.timeleft, this.creatorUsername);
+
   final int id;
   final String question;
   final List<Option> options;
   final DateTime timeleft;
+  final String creatorUsername;
 
   int get totalVotes => options.fold(0, (s, o) => s + o.votes);
 
@@ -24,5 +25,6 @@ class Poll {
     j['question'],
     (j['options'] as List).map((o) => Option.fromJson(o)).toList(),
     DateTime.parse(j['timeleft']),
+    j['creator_username'],
   );
 }

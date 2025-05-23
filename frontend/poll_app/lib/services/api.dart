@@ -11,10 +11,6 @@ Future<bool> sendAuthToBackend({String? idToken, String? accessToken}) async {
       : {'access_token': accessToken};
 
   final res = await _client.post('/login', data: body);
-
-  print('Login response code: ${res.statusCode}');
-  print('Login response body: ${res.data}');
-
   return res.statusCode == 200;
 }
 
@@ -70,9 +66,7 @@ Future<List<Poll>> fetchUserPolls({int? userId}) async {
     throw Exception('Expected list from /polls but got: ${res.data}');
   }
 
-  return (res.data as List)
-      .map((e) => Poll.fromJson(e as Map<String, dynamic>))
-      .toList();
+  return (res.data as List).map((e) => Poll.fromJson(e)).toList();
 }
 
 

@@ -1,12 +1,3 @@
-#!/usr/bin/env python3
-"""
-seed_demo.py
-
-Create a demo "friend" user with two polls and one comment.
-Run via:
-    python seed_demo.py
-"""
-
 from datetime import datetime, timedelta
 from server import app, db, User, Poll, PollOption, Comment
 

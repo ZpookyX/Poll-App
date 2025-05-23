@@ -5,19 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="050e0251-a5e2-4276-b2bb-72e098b2442c" name="Changes" comment="Merge">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/ios/Runner.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/ios/Runner.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/ios/Runner.xcworkspace/contents.xcworkspacedata" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/ios/Runner.xcworkspace/contents.xcworkspacedata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/ios/Runner/Info.plist" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/ios/Runner/Info.plist" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/routes/app_router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/routes/app_router.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/demo_user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/demo_user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/poll.db" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/services/http_client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/services/http_client.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart" afterDir="false" />
     </list>
-    <list id="d8617314-fca6-4440-a275-259ea9ed5c2a" name="Changes by axel" comment="" />
+    <list id="d8617314-fca6-4440-a275-259ea9ed5c2a" name="Changes by axel" comment="">
+      <change beforePath="$PROJECT_DIR$/backend/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/models/poll.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/models/poll.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/routes/app_router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/routes/app_router.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,6 +46,28 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart">
+      <ranges>
+        <range start1="2" end1="2" start2="2" end2="3" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="8" end1="9" start2="9" end2="10" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="26" end1="27" start2="27" end2="28" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="86" end1="87" start2="87" end2="88" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/backend/server.py">
+      <ranges>
+        <range start1="87" end1="87" start2="87" end2="88" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="89" end1="89" start2="90" end2="91" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="260" end1="264" start2="262" end2="263" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="272" end1="281" start2="271" end2="273" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="304" end1="305" start2="296" end2="298" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="312" end1="313" start2="305" end2="306" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="321" end1="323" start2="314" end2="316" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="324" end1="329" start2="317" end2="324" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -248,7 +271,7 @@
       <workItem from="1747930538061" duration="1450000" />
       <workItem from="1747932036089" duration="19619000" />
       <workItem from="1747986024053" duration="2208000" />
-      <workItem from="1747988251005" duration="7317000" />
+      <workItem from="1747988251005" duration="10720000" />
     </task>
     <servers />
   </component>
@@ -261,7 +284,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/tddd80_2025_projekt$.coverage" NAME=" Coverage Results" MODIFIED="1747992843795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
-    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$demo_user.coverage" NAME="demo_user Coverage Results" MODIFIED="1747994269868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
-    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$server.coverage" NAME="server Coverage Results" MODIFIED="1747994266095" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$demo_user.coverage" NAME="demo_user Coverage Results" MODIFIED="1747998471088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$server.coverage" NAME="server Coverage Results" MODIFIED="1747998468154" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
   </component>
 </project>

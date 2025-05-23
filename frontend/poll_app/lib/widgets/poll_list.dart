@@ -7,7 +7,6 @@ import '../provider/profile_provider.dart';
 import '../provider/poll_provider.dart';
 import '../services/api.dart';
 
-/// A list of polls, filtered by source: unvoted, user, interacted, or friends.
 class PollList extends StatelessWidget {
   const PollList.user({super.key, this.userId}) : _source = _PollListSource.user;
   const PollList.interacted({super.key, this.userId}) : _source = _PollListSource.interacted;
@@ -117,6 +116,11 @@ class _PollCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              'Created by ${poll.creatorUsername}',
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+            const SizedBox(height: 6),
             Text(
               poll.question,
               style: Theme.of(context)

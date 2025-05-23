@@ -85,8 +85,10 @@ class Poll(db.Model):
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
     timeleft: Mapped[datetime] = mapped_column(nullable=False)
 
+    creator = relationship("User", backref="polls")
     comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="poll", cascade="all, delete-orphan")
     options: Mapped[list["PollOption"]] = relationship("PollOption", back_populates="poll", cascade="all, delete-orphan")
+
 
 
 class PollOption(db.Model):
@@ -258,10 +260,7 @@ def list_polls():
         return False
 
     def total_votes(poll):
-        total = 0
-        for option in poll.options:
-            total += len(option.votes)
-        return total
+        return sum(len(option.votes) for option in poll.options)
 
     if filter_type == 'unvoted':
         all_polls = [poll for poll in all_polls if not user_has_voted(poll)]
@@ -270,15 +269,8 @@ def list_polls():
     elif filter_type == 'interacted':
         interacted = []
         for poll in all_polls:
-            voted = False
-            commented = False
-            for option in poll.options:
-                for vote in option.votes:
-                    if vote.user_id == target_user_id:
-                        voted = True
-            for comment in poll.comments:
-                if comment.author_id == target_user_id:
-                    commented = True
+            voted = any(vote.user_id == target_user_id for option in poll.options for vote in option.votes)
+            commented = any(comment.author_id == target_user_id for comment in poll.comments)
             if voted or commented:
                 interacted.append(poll)
         all_polls = interacted
@@ -302,7 +294,8 @@ def list_polls():
                     'votes': len(option.votes)
                 } for option in poll.options
             ],
-            'timeleft': poll.timeleft.isoformat()
+            'timeleft': poll.timeleft.isoformat(),
+            'creator_username': poll.creator.username
         })
 
     return jsonify(response_data), 200
@@ -310,7 +303,7 @@ def list_polls():
 @app.route('/polls/<poll_id>', methods=['GET'])
 def retrieve_poll(poll_id):
     try:
-        poll_id = int(poll_id)  # Convert poll_id string to integer
+        poll_id = int(poll_id)
     except ValueError:
         return jsonify({'message': 'invalid poll id'}), 400
 
@@ -319,14 +312,16 @@ def retrieve_poll(poll_id):
         return jsonify({'message': 'poll not found'}), 404
 
     options = [{'option_id': option.option_id,
-             'option_text': option.option_text,
-             'votes': len(option.votes)} for option in poll.options]
+                'option_text': option.option_text,
+                'votes': len(option.votes)} for option in poll.options]
 
-    return jsonify({'poll_id': poll.poll_id,
-                    'question': poll.question,
-                    'options': options,
-                    'timeleft': poll.timeleft.isoformat()}), 200
-
+    return jsonify({
+        'poll_id': poll.poll_id,
+        'question': poll.question,
+        'options': options,
+        'timeleft': poll.timeleft.isoformat(),
+        'creator_username': poll.creator.username
+    }), 200
 
 @app.route('/polls/<poll_id>', methods=['DELETE'])
 @login_required

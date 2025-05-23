@@ -22,6 +22,8 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
   initialLocation: '/',
   refreshListenable: auth,
   redirect: (context, state) {
+    if (!auth.ready) return null;
+
     final loggedIn = auth.isLoggedIn;
     final goingToLogin = state.uri.path == '/login';
 
@@ -35,6 +37,7 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
       path: '/login',
       builder: (_, __) => const LoginScreen(),
     ),
+    // Shell route is mainly to have a persistent NavBar
     ShellRoute(
       navigatorKey: _shellNavKey,
       builder: (context, state, child) => Scaffold(
