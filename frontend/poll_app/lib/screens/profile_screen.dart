@@ -23,7 +23,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    context.read<ProfileProvider>().loadUserProfile(userId: widget.userId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileProvider>().loadUserProfile();
+    });
   }
 
   @override
