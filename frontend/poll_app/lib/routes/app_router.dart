@@ -4,10 +4,10 @@ import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/create_poll_screen.dart';
 import '../screens/poll_screen.dart';
-import '../provider/auth_provider.dart';
-import '../widgets/bottom_nav_bar.dart';
 import '../screens/settings_screen.dart';
 import '../screens/profile_screen.dart';
+import '../provider/auth_provider.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 GoRouter? _router;
 
@@ -19,16 +19,11 @@ GoRouter initRouterOnce(AuthProvider auth) {
 GoRouter createRouter(AuthProvider auth) => GoRouter(
   initialLocation: '/',
   refreshListenable: auth,
-  redirect: (_, state) {
-    final loggedIn = auth.isLoggedIn;
-    final onLogin = state.matchedLocation == '/login';
-    if (!loggedIn && !onLogin) return '/login';
-    if (loggedIn && onLogin) return '/';
-    return null;
-  },
   routes: [
-    GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-
+    GoRoute(
+      path: '/login',
+      builder: (_, __) => const LoginScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) => Scaffold(
         body: child,
@@ -37,14 +32,44 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
         ),
       ),
       routes: [
-        GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
-        GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
-        GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+        GoRoute(
+          name: 'home',
+          path: '/',
+          builder: (_, __) => const HomeScreen(),
+        ),
+        GoRoute(
+          name: 'settings',
+          path: '/settings',
+          builder: (_, __) => const SettingsScreen(),
+        ),
+        GoRoute(
+          name: 'profile_self',
+          path: '/profile',
+          pageBuilder: (context, state) => MaterialPage(
+            key: const ValueKey('profile_self'),
+            child: const ProfileScreen(),
+          ),
+        ),
+        GoRoute(
+          name: 'profile_detail',
+          path: '/profile/:id',
+          pageBuilder: (context, state) {
+            final id = int.tryParse(state.pathParameters['id']!);
+            return MaterialPage(
+              key: ValueKey('profile_detail_$id'),
+              child: ProfileScreen(userId: id),
+            );
+          },
+        ),
       ],
     ),
-
-    GoRoute(path: '/create', builder: (_, __) => const CreatePollScreen()),
     GoRoute(
+      name: 'create',
+      path: '/create',
+      builder: (_, __) => const CreatePollScreen(),
+    ),
+    GoRoute(
+      name: 'poll',
       path: '/poll/:id',
       builder: (context, state) {
         final pollId = state.pathParameters['id']!;
@@ -52,28 +77,13 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
         return PollScreen(pollId: pollId, fromCreate: fromCreate);
       },
     ),
-
-    GoRoute(
-      path: '/profile/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id'];
-        return ProfileScreen(userId: id == null ? null : int.tryParse(id));
-      },
-    ),
   ],
 );
 
 int _calculateIndex(String path) {
-  switch (path) {
-    case '/':
-      return 0;
-    case '/create':
-      return 1;
-    case '/settings':
-      return 2;
-    case '/profile':
-      return 3;
-    default:
-      return 0;
-  }
+  if (path == '/') return 0;
+  if (path == '/create') return 1;
+  if (path == '/settings') return 2;
+  if (path.startsWith('/profile')) return 3;
+  return 0;
 }

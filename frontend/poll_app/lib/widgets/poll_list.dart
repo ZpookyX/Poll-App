@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
 import '../models/poll.dart';
 import '../provider/profile_provider.dart';
+import '../provider/poll_provider.dart';
 import '../services/api.dart';
 
+/// A list of polls, filtered by source: unvoted, user, interacted, or friends.
 class PollList extends StatelessWidget {
   const PollList.user({super.key, this.userId}) : _source = _PollListSource.user;
   const PollList.interacted({super.key, this.userId}) : _source = _PollListSource.interacted;
   const PollList.unvoted({super.key})
       : _source = _PollListSource.unvoted,
+        userId = null;
+  const PollList.friends({super.key})
+      : _source = _PollListSource.friends,
         userId = null;
 
   final _PollListSource _source;
@@ -23,6 +29,22 @@ class PollList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ── Friends’ polls ─────────────────────────────────────────────
+    if (_source == _PollListSource.friends) {
+      final pollProv = context.watch<PollProvider>();
+      if (pollProv.isLoadingFriends) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      final polls = pollProv.friendsPolls;
+      if (polls.isEmpty) {
+        return const Center(
+          child: Text('None of your friends have made any polls'),
+        );
+      }
+      return _buildList(context, polls);
+    }
+
+    // ── Unvoted polls ──────────────────────────────────────────────
     if (_source == _PollListSource.unvoted) {
       return FutureBuilder<List<Poll>>(
         future: fetchUnvoted(),
@@ -31,16 +53,23 @@ class PollList extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           final polls = snapshot.data!;
-          if (polls.isEmpty) return const Center(child: Text('Nothing left to vote'));
+          if (polls.isEmpty) {
+            return const Center(child: Text('Nothing left to vote'));
+          }
           return _buildList(context, polls);
         },
       );
     }
 
-    final provider = context.watch<ProfileProvider>();
+    // ── User / Interacted polls ───────────────────────────────────
+    final profileProv = context.watch<ProfileProvider>();
     final polls = _source == _PollListSource.user
-        ? provider.userPolls
-        : provider.interactedPolls;
+        ? profileProv.userPolls
+        : profileProv.interactedPolls;
+
+    if (polls.isEmpty) {
+      return const Center(child: Text('No polls here'));
+    }
 
     return _buildList(context, polls);
   }
@@ -60,7 +89,7 @@ class PollList extends StatelessWidget {
   }
 }
 
-enum _PollListSource { user, interacted, unvoted }
+enum _PollListSource { user, interacted, unvoted, friends }
 
 class _PollCard extends StatelessWidget {
   const _PollCard({
@@ -123,10 +152,8 @@ class _PollCard extends StatelessWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: Colors.black26,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 22, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                    padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
                   onPressed: onTap,
                   child: const Row(
