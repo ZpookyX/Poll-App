@@ -13,6 +13,7 @@ final _shellNavKey = GlobalKey<NavigatorState>();
 
 GoRouter? _router;
 
+// Since the router needs to now the auth state
 GoRouter initRouterOnce(AuthProvider auth) {
   _router ??= createRouter(auth);
   return _router!;

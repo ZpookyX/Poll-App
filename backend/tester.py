@@ -88,16 +88,6 @@ def test_retrieve_poll_and_errors(client, test_app, login_user_fixture):
     res = client.get("/polls/notanumber")
     assert res.status_code == 400
 
-# test poll deletion under vote threshold
-def test_delete_poll(client, test_app, login_user_fixture):
-    poll = Poll(question="Delete me", creator_id=login_user_fixture.id, timeleft=datetime.now(UTC) + timedelta(hours=1))
-    db.session.add(poll)
-    db.session.flush()
-    db.session.add(PollOption(poll_id=poll.poll_id, option_text="Sure"))
-    db.session.commit()
-
-    res = client.delete(f"/polls/{poll.poll_id}")
-    assert res.status_code == 200
 
 # test deletion blocked with 10+ votes
 def test_block_delete_voted_poll(client, test_app, login_user_fixture):

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
-final CookieJar _cookieJar = CookieJar(); // simple in-memory cookie jar
+final CookieJar _cookieJar = CookieJar(); // Behövs tydligen föra att spara kakorna
 
 Dio createClient() {
   final baseUrl = Platform.isAndroid

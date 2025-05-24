@@ -323,18 +323,6 @@ def retrieve_poll(poll_id):
         'creator_username': poll.creator.username
     }), 200
 
-@app.route('/polls/<poll_id>', methods=['DELETE'])
-@login_required
-def remove_poll(poll_id):
-    poll = db.session.get(Poll, poll_id)
-    if not poll:
-        return jsonify({'message': "poll not found"}), 404
-    votes = sum(len(o.votes) for o in poll.options)
-    if votes >= 10:
-        return jsonify({'message': "can't delete poll with 10+ votes"}), 400
-    db.session.delete(poll)
-    db.session.commit()
-    return '', 200
 
 @app.route('/polls/<poll_id>/vote', methods=['POST'])
 @login_required

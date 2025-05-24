@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from server import app, db, User, Poll, PollOption, Comment
 
-
 def seed_demo_user():
     # Create a demo friend
     friend = User(username="friend@example.com")
@@ -36,7 +35,7 @@ def seed_demo_user():
 
     # Add a comment on the first poll
     comment = Comment(
-        comment_text="I personally love Blue!",
+        comment_text="I hate red, awful color",
         author_id=friend.id,
         poll_id=p1.poll_id,
         parent_comment_id=None

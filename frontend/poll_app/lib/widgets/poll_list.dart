@@ -28,7 +28,7 @@ class PollList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ── Friends’ polls ─────────────────────────────────────────────
+    // Friends polls
     if (_source == _PollListSource.friends) {
       final pollProv = context.watch<PollProvider>();
       if (pollProv.isLoadingFriends) {
@@ -43,7 +43,7 @@ class PollList extends StatelessWidget {
       return _buildList(context, polls);
     }
 
-    // ── Unvoted polls ──────────────────────────────────────────────
+    // Unvoted polls
     if (_source == _PollListSource.unvoted) {
       return FutureBuilder<List<Poll>>(
         future: fetchUnvoted(),
@@ -60,7 +60,7 @@ class PollList extends StatelessWidget {
       );
     }
 
-    // ── User / Interacted polls ───────────────────────────────────
+    //  User / Interacted polls
     final profileProv = context.watch<ProfileProvider>();
     final polls = _source == _PollListSource.user
         ? profileProv.userPolls
