@@ -47,7 +47,9 @@ class ProfileProvider extends ChangeNotifier {
       await followUser(otherUserId);
       isFollowingOtherUser = true;
     }
+    final userInfo = await fetchUserInfo(otherUserId);
+    followers = userInfo?['followers'] ?? followers;
+    following = userInfo?['following'] ?? following;
     notifyListeners();
   }
 }
-

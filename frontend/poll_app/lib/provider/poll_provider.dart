@@ -8,9 +8,11 @@ class PollProvider extends ChangeNotifier {
   bool isLoadingUnvoted = false;
   bool isLoadingFriends = false;
 
-  Future<void> loadUnvoted() async {
-    isLoadingUnvoted = true;
-    notifyListeners();
+  Future<void> loadUnvoted({bool silent = false}) async {
+    if (!silent) {
+      isLoadingUnvoted = true;
+      notifyListeners();
+    }
 
     try {
       unvotedPolls = await fetchUnvoted();

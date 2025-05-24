@@ -45,19 +45,18 @@ class PollList extends StatelessWidget {
 
     // Unvoted polls
     if (_source == _PollListSource.unvoted) {
-      return FutureBuilder<List<Poll>>(
-        future: fetchUnvoted(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final polls = snapshot.data!;
-          if (polls.isEmpty) {
-            return const Center(child: Text('Nothing left to vote'));
-          }
-          return _buildList(context, polls);
-        },
-      );
+      final pollProv = context.watch<PollProvider>();
+      final polls = pollProv.unvotedPolls;
+
+      if (pollProv.isLoadingUnvoted) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (polls.isEmpty) {
+        return const Center(child: Text('Nothing left to vote'));
+      }
+
+      return _buildList(context, polls);
     }
 
     //  User / Interacted polls

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/poll.dart';
+import '../provider/poll_provider.dart';
 import '../services/api.dart';
 import '../provider/comment_provider.dart';
 import '../widgets/comment_card.dart';
@@ -39,6 +40,9 @@ class _PollScreenState extends State<PollScreen> {
         _pollFuture = fetchPoll(widget.pollId);
         _hasVoted = true;
       });
+
+      context.read<PollProvider>().loadUnvoted(silent: true);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vote recorded!')),
       );

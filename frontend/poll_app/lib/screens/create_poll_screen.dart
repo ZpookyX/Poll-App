@@ -49,9 +49,10 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
           onPressed: () => context.go('/'),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
               controller: _q,
@@ -79,7 +80,6 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
               ),
             ),
 
-            // Add option button
             if (_optionControllers.length < 8)
               Align(
                 alignment: Alignment.centerLeft,
@@ -98,9 +98,8 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
                 ),
               ),
 
-            const Spacer(),
+            const SizedBox(height: 24), // spacing before button
 
-            // Create button
             ElevatedButton(
               onPressed: () async {
                 final localContext = context;
