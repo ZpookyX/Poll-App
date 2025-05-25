@@ -48,14 +48,14 @@ Totalt 12 poäng.
     - Med egen setup behöver man egna klient-ids
 
 4. Starta backend:
-      ```bash
-      python backend/server.py # eller: export FLASK_APP=server && flask run
-      ```
+   ```bash
+   python backend/server.py # eller: export FLASK_APP=server och sedan flask run
+   ```
 
 ### Klient (Flutter)
 1. Gå till rätt mapp
-```bash
-   cd frontend
+   ```bash
+   cd frontend/poll_app
    ```
 
 2. Hämta paket:
