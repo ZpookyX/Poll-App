@@ -1,9 +1,11 @@
 import 'option.dart';
+
 class Poll {
   Poll(this.id, this.question, this.options, this.timeleft, this.creatorUsername);
 
   final int id;
   final String question;
+  // This uses the defined Option model in option.dart
   final List<Option> options;
   final DateTime timeleft;
   final String creatorUsername;

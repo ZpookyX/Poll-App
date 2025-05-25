@@ -12,6 +12,8 @@ class BottomNavBar extends StatelessWidget {
       selectedItemColor: Colors.blue,
       unselectedItemColor: Colors.grey,
       type: BottomNavigationBarType.fixed,
+
+      // ---------- Handle navigation when tab is tapped ----------
       onTap: (index) {
         switch (index) {
           case 0:
@@ -28,6 +30,7 @@ class BottomNavBar extends StatelessWidget {
             break;
         }
       },
+      // ---------- Define bottom navigation items ----------
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),

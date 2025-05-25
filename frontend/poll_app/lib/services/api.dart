@@ -3,8 +3,14 @@ import '../models/poll.dart';
 import '../models/comment.dart';
 import 'http_client.dart';
 
+// Use DIO to be able to handle HTTP in dart
+// The createClient() function is created inside http_client.dart
 final Dio _client = createClient();
 
+
+// Below are all the api functions to tie frontend together with backend
+
+// ----------  Authentication ----------
 Future<bool> sendAuthToBackend({String? idToken, String? accessToken}) async {
   final body = idToken != null
       ? {'id_token': idToken}
@@ -18,6 +24,7 @@ Future<void> logoutUser() async {
   await _client.get('/logout');
 }
 
+// ----------  Polls ----------
 Future<int> createPoll(String q, List<String> opts) async {
   final res = await _client.post('/polls', data: {'question': q, 'options': opts},
   );
@@ -44,12 +51,6 @@ Future<List<Poll>> fetchInteractedPolls({int? userId}) async {
       .map((e) => Poll.fromJson(e as Map<String, dynamic>))
       .toList();
 }
-
-Future<Map<String, dynamic>?> fetchSessionUser() async {
-  final res = await _client.get('/whoami');
-  return res.statusCode == 200 ? res.data as Map<String, dynamic> : null;
-}
-
 Future<Poll> fetchPoll(String pollId) async {
   final res = await _client.get('/polls/$pollId');
   if (res.statusCode != 200) throw Exception('Poll not found');
@@ -69,21 +70,56 @@ Future<List<Poll>> fetchUserPolls({int? userId}) async {
   return (res.data as List).map((e) => Poll.fromJson(e)).toList();
 }
 
-
 Future<bool> votePoll(String pollId, int optionId) async {
-  final res = await _client.post(
-    '/polls/$pollId/vote',
-    data: {'option_id': optionId},
-  );
-  return res.statusCode == 200;
+   final res = await _client.post(
+     '/polls/$pollId/vote',
+     data: {'option_id': optionId},
+   );
+   return res.statusCode == 200;
+ }
+
+// ----------  User ----------
+Future<Map<String, dynamic>?> fetchSessionUser() async {
+  final res = await _client.get('/whoami');
+  return res.statusCode == 200 ? res.data as Map<String, dynamic> : null;
+}
+
+Future<Map<String, dynamic>?> fetchUserInfo(int userId) async {
+  final res = await _client.get('/users/$userId');
+  return res.statusCode == 200
+      ? res.data as Map<String, dynamic>
+      : null;
 }
 
 Future<bool> hasUserVoted(String pollId) async {
-  final res = await _client.get('/polls/$pollId/has_voted');
+   final res = await _client.get('/polls/$pollId/has_voted');
+   if (res.statusCode != 200) return false;
+   return (res.data as Map<String, dynamic>)['voted'] ?? false;
+ }
+
+Future<bool> checkIfFollowing(int userId) async {
+  final res = await _client.get('/users/$userId/following_status');
   if (res.statusCode != 200) return false;
-  return (res.data as Map<String, dynamic>)['voted'] ?? false;
+  return (res.data as Map<String, dynamic>)['is_following'] ?? false;
 }
 
+Future<List<int>> fetchFollowing() async {
+  final res = await _client.get('/users/me/following');
+  if (res.statusCode != 200) {
+    throw Exception('fetchFollowing ${res.statusCode}');
+  }
+  return (res.data as List).cast<int>();
+}
+
+Future<void> followUser(int userId) async {
+  await _client.post('/users/$userId/follow');
+}
+
+Future<void> unfollowUser(int userId) async {
+  await _client.delete('/users/$userId/follow');
+}
+
+// ----------  Comments ----------
 Future<String> commentPoll(String pollId, String commentText) async {
   final res = await _client.post(
     '/polls/$pollId/comments',
@@ -109,33 +145,4 @@ Future<void> likeComment(int commentId) async {
 Future<void> unlikeComment(int commentId) async {
   final res = await _client.delete('/comments/$commentId/like');
   if (res.statusCode != 200) throw Exception('Failed to unlike comment');
-}
-
-Future<Map<String, dynamic>?> fetchUserInfo(int userId) async {
-  final res = await _client.get('/users/$userId');
-  return res.statusCode == 200
-      ? res.data as Map<String, dynamic>
-      : null;
-}
-
-Future<bool> checkIfFollowing(int userId) async {
-  final res = await _client.get('/users/$userId/following_status');
-  if (res.statusCode != 200) return false;
-  return (res.data as Map<String, dynamic>)['is_following'] ?? false;
-}
-
-Future<List<int>> fetchFollowing() async {
-  final res = await _client.get('/users/me/following');
-  if (res.statusCode != 200) {
-    throw Exception('fetchFollowing ${res.statusCode}');
-  }
-  return (res.data as List).cast<int>();
-}
-
-Future<void> followUser(int userId) async {
-  await _client.post('/users/$userId/follow');
-}
-
-Future<void> unfollowUser(int userId) async {
-  await _client.delete('/users/$userId/follow');
 }

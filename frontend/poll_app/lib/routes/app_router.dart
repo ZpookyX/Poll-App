@@ -13,22 +13,26 @@ final _shellNavKey = GlobalKey<NavigatorState>();
 
 GoRouter? _router;
 
-// Since the router needs to now the auth state
+// We don't want to reinitialize the router everytime we rebuild poll app
 GoRouter initRouterOnce(AuthProvider auth) {
   _router ??= createRouter(auth);
   return _router!;
 }
 
+// The router depends on auth state to conditionally redirect to login or home
 GoRouter createRouter(AuthProvider auth) => GoRouter(
   initialLocation: '/',
-  refreshListenable: auth,
+  refreshListenable: auth,  // It listens to auth for UI changes
   redirect: (context, state) {
     if (!auth.ready) return null;
 
     final loggedIn = auth.isLoggedIn;
     final goingToLogin = state.uri.path == '/login';
 
+    // Forces to go back to login screen if not logged in
     if (!loggedIn && !goingToLogin) return '/login';
+
+    // If not logged in then we can't access login screen
     if (loggedIn && goingToLogin) return '/';
 
     return null;
@@ -38,7 +42,7 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
       path: '/login',
       builder: (_, __) => const LoginScreen(),
     ),
-    // Shell route is mainly to have a persistent NavBar
+    // Shell route exists to have them share a NavBar
     ShellRoute(
       navigatorKey: _shellNavKey,
       builder: (context, state, child) => Scaffold(
@@ -65,6 +69,8 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
         ),
       ],
     ),
+
+    // Other Routes without Navbar
     GoRoute(
       name: 'profile_detail',
       path: '/user/:id',
@@ -76,16 +82,23 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
         );
       },
     ),
+
+    // Poll-creation screen: is outside ShellRoute to not have NavBar
     GoRoute(
       name: 'create',
       path: '/create',
       builder: (_, __) => const CreatePollScreen(),
     ),
+
+    // Poll screen
     GoRoute(
       name: 'poll',
       path: '/poll/:id',
       builder: (context, state) {
         final pollId = state.pathParameters['id']!;
+        // If we navigated to the poll screen from the poll creation screen
+        // then we go back to the home screen, else we pop the navigation stack
+        // and can therefore go back to other places like the profile
         final fromCreate = state.uri.queryParameters['fromCreate'] == 'true';
         return PollScreen(pollId: pollId, fromCreate: fromCreate);
       },
@@ -93,7 +106,7 @@ GoRouter createRouter(AuthProvider auth) => GoRouter(
   ],
 );
 
-
+// BottomNavbar navigation
 int _calculateIndex(String path) {
   if (path == '/') return 0;
   if (path == '/create') return 1;

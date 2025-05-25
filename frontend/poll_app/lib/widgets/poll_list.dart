@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../models/poll.dart';
 import '../provider/profile_provider.dart';
 import '../provider/poll_provider.dart';
-import '../services/api.dart';
 
 class PollList extends StatelessWidget {
+  // ---------- Constructors for different poll sources ----------
   const PollList.user({super.key, this.userId}) : _source = _PollListSource.user;
   const PollList.interacted({super.key, this.userId}) : _source = _PollListSource.interacted;
-  const PollList.unvoted({super.key})
-      : _source = _PollListSource.unvoted,
-        userId = null;
-  const PollList.friends({super.key})
-      : _source = _PollListSource.friends,
-        userId = null;
+  const PollList.unvoted({super.key}) : _source = _PollListSource.unvoted, userId = null;
+  const PollList.friends({super.key}) : _source = _PollListSource.friends, userId = null;
 
   final _PollListSource _source;
   final int? userId;
 
-  static const _palette = [
-    Color(0xFF262626),
-    Color(0xFF002E2E),
-    Color(0xFF1F0F24),
-  ];
+  // Returns a theme-aware card background color
+  Color _cardColor(BuildContext context) => Theme.of(context).colorScheme.surfaceContainerHighest;
 
   @override
   Widget build(BuildContext context) {
-    // Friends polls
+    // ---------- Friends polls ----------
     if (_source == _PollListSource.friends) {
       final pollProv = context.watch<PollProvider>();
       if (pollProv.isLoadingFriends) {
@@ -41,9 +33,8 @@ class PollList extends StatelessWidget {
         );
       }
       return _buildList(context, polls);
-    }
-
-    // Unvoted polls
+}
+    // ---------- Unvoted polls ----------
     if (_source == _PollListSource.unvoted) {
       final pollProv = context.watch<PollProvider>();
       final polls = pollProv.unvotedPolls;
@@ -59,7 +50,7 @@ class PollList extends StatelessWidget {
       return _buildList(context, polls);
     }
 
-    //  User / Interacted polls
+    // ---------- User and interacted polls ----------
     final profileProv = context.watch<ProfileProvider>();
     final polls = _source == _PollListSource.user
         ? profileProv.userPolls
@@ -72,6 +63,7 @@ class PollList extends StatelessWidget {
     return _buildList(context, polls);
   }
 
+  // ---------- Builds visual poll list ----------
   Widget _buildList(BuildContext context, List<Poll> polls) {
     return ListView.builder(
       itemCount: polls.length,
@@ -79,7 +71,7 @@ class PollList extends StatelessWidget {
         final poll = polls[index];
         return _PollCard(
           poll: poll,
-          color: _palette[index % _palette.length],
+          color: _cardColor(context),
           onTap: () => context.push('/poll/${poll.id}'),
         );
       },
@@ -87,8 +79,10 @@ class PollList extends StatelessWidget {
   }
 }
 
+// Enum representing source of polls
 enum _PollListSource { user, interacted, unvoted, friends }
 
+// ---------- Visual card for individual poll ----------
 class _PollCard extends StatelessWidget {
   const _PollCard({
     required this.poll,
@@ -102,6 +96,9 @@ class _PollCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final TextColor = Theme.of(context).colorScheme.onSurface;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -115,24 +112,28 @@ class _PollCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ---------- Username ----------
             Text(
-              'Created by ${poll.creatorUsername}',
-              style: const TextStyle(color: Colors.white70, fontSize: 13),
+              '${poll.creatorUsername}',
+              style: TextStyle(color: TextColor, fontSize: 13),
             ),
             const SizedBox(height: 6),
+            // ---------- Poll question ----------
             Text(
               poll.question,
               style: Theme.of(context)
                   .textTheme
                   .titleLarge!
-                  .copyWith(fontWeight: FontWeight.w600, color: Colors.white),
+                  .copyWith(fontWeight: FontWeight.w600, color: TextColor),
             ),
             const SizedBox(height: 6),
+            // ---------- Time left to vote on poll ----------
             Text(
               poll.timeLeftString,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: TextStyle(color: TextColor, fontSize: 12),
             ),
             const SizedBox(height: 10),
+            // ---------- Votes info and view button  ----------
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -142,26 +143,29 @@ class _PollCard extends StatelessWidget {
                     children: [
                       Text(
                         '${poll.totalVotes} votes already',
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        style: TextStyle(color: TextColor, fontSize: 14),
                       ),
                       Text(
                         'You haven’t voted on this poll',
-                        style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        style: TextStyle(color: TextColor, fontSize: 14),
                       ),
                     ],
                   ),
                 ),
                 FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: Colors.black26,
-                    foregroundColor: Colors.white,
+                    backgroundColor: scheme.surfaceDim,
+                    foregroundColor: scheme.onSurface,
                     padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
                   onPressed: onTap,
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [Text('View'), Icon(Icons.chevron_right)],
+                    children: [
+                      Text('View', style: TextStyle(color: TextColor)),
+                      Icon(Icons.chevron_right, color: TextColor),
+                    ],
                   ),
                 ),
               ],

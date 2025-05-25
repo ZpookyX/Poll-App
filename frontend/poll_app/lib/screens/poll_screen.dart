@@ -1,149 +1,149 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../models/poll.dart';
 import '../provider/poll_provider.dart';
-import '../services/api.dart';
 import '../provider/comment_provider.dart';
+import '../provider/poll_screen_provider.dart';
 import '../widgets/comment_card.dart';
 
-class PollScreen extends StatefulWidget {
+class PollScreen extends StatelessWidget {
   final String pollId;
   final bool fromCreate;
   const PollScreen({super.key, required this.pollId, this.fromCreate = false});
 
   @override
-  State<PollScreen> createState() => _PollScreenState();
-}
-
-class _PollScreenState extends State<PollScreen> {
-  late Future<Poll> _pollFuture;
-  final _controller = TextEditingController();
-  bool _hasVoted = false;
-  int? _selectedOptionId;
-
-  @override
-  void initState() {
-    super.initState();
-    _pollFuture = fetchPoll(widget.pollId);
-    hasUserVoted(widget.pollId).then((voted) {
-      setState(() => _hasVoted = voted);
-    });
-  }
-
-  void _handleVote(int optionId) async {
-    final success = await votePoll(widget.pollId, optionId);
-    if (!mounted) return;
-
-    if (success) {
-      setState(() {
-        _pollFuture = fetchPoll(widget.pollId);
-        _hasVoted = true;
-      });
-
-      context.read<PollProvider>().loadUnvoted(silent: true);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vote recorded!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to vote or already voted')),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CommentProvider(widget.pollId),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Poll'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => widget.fromCreate ? context.go('/') : context.pop(),
-          ),
-        ),
-        body: FutureBuilder<Poll>(
-          future: _pollFuture,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PollScreenProvider(pollId: pollId, fromCreate: fromCreate),),
+        ChangeNotifierProvider(create: (_) => CommentProvider(pollId)),
+      ],
+      child: Consumer2<PollScreenProvider, CommentProvider>(
+        builder: (context, pollProv, commentProv, _) {
+          // ---------- Initial loading spinner ----------
+          if (pollProv.isLoading || pollProv.poll == null) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-            final poll = snapshot.data!;
-            final provider = context.watch<CommentProvider>();
+          final poll = pollProv.poll!;
+          // One controller per build because the widget only rebuilds
+          // after we either posted or refreshed comments.
+          final TextEditingController textCtrl = TextEditingController();
 
-            return ListView(
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Poll'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => fromCreate ? context.go('/') : context.pop(),
+              ),
+            ),
+            body: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                // ---------- Question ----------
                 Text(
                   poll.question,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 20),
 
-                if (!_hasVoted) ...[
-                  ...poll.options.map((opt) => RadioListTile<int>(
-                    title: Text(opt.text),
-                    value: opt.id,
-                    groupValue: _selectedOptionId,
-                    onChanged: (val) => setState(() => _selectedOptionId = val),
-                  )),
+                // ---------- Vote section ----------
+                // Here we use spread operator again to create the options
+                // like we did in create_poll_screen
+                if (!pollProv.hasVoted) ...[
+                  ...poll.options.map(
+                        (opt) => RadioListTile<int>(
+                      title: Text(opt.text),
+                      value: opt.id,
+                      groupValue: pollProv.selectedOptionId,
+                      onChanged: pollProv.selectOption,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: _selectedOptionId == null
+                    onPressed: pollProv.selectedOptionId == null
                         ? null
-                        : () => _handleVote(_selectedOptionId!),
+                        : () async {
+                      final pollProvider = context.read<PollProvider>();
+                      await pollProv.vote(pollProvider);
+
+                      final msg = pollProv.voteSuccessful
+                          ? 'Vote recorded!'
+                          : pollProv.errorMessage ?? 'Failed';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(msg)),
+                      );
+                    },
                     child: const Text('Submit Vote'),
                   ),
                 ] else ...[
+                  // ---------- Results ----------
+                  // If the user has voted
                   ...poll.options.map((opt) {
                     final percent = poll.totalVotes == 0
                         ? 0
-                        : (opt.votes / poll.totalVotes * 100).toStringAsFixed(1);
+                        : (opt.votes / poll.totalVotes * 100)
+                        .toStringAsFixed(1);
                     return ListTile(
                       title: Text('${opt.text} - ${opt.votes} votes ($percent%)'),
                     );
                   }),
                   const Divider(),
-                  const Text('Add a comment', style: TextStyle(fontWeight: FontWeight.bold)),
+                  // ---------- Comment input ----------
+                  // This is only visible if the user has voted
+                  const Text(
+                    'Add a comment',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Row(
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: _controller,
-                          decoration: const InputDecoration(hintText: 'Type a comment...'),
+                          controller: textCtrl,
+                          decoration: const InputDecoration(
+                            hintText: 'Type a comment...',
+                          ),
+                          onSubmitted: (text) async {
+                            final trimmed = text.trim();
+                            if (trimmed.isEmpty) return;
+                            await context.read<CommentProvider>().postComment(trimmed);
+                            textCtrl.clear(); // Clear after successful post
+                          },
                         ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed: () {
-                          final text = _controller.text.trim();
-                          if (text.isNotEmpty) {
-                            context.read<CommentProvider>().postComment(text);
-                            _controller.clear();
-                          }
+                        onPressed: () async {
+                          final trimmed = textCtrl.text.trim();
+                          if (trimmed.isEmpty) return;
+                          await context.read<CommentProvider>().postComment(trimmed);
+                          textCtrl.clear();
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  if (provider.isLoading)
+                  if (commentProv.isLoading)
                     const Center(child: CircularProgressIndicator()),
-
-                  ...provider.comments.map((c) => CommentCard(
-                    comment: c,
-                    onToggleLike: () => context.read<CommentProvider>().toggleLike(c.commentId),
-                  )),
+                  // ---------- Comment list ----------
+                  // Uses the CommentCard widget that we define in /widgets
+                  // We map each comment to a comment card
+                  ...commentProv.comments.map(
+                        (c) => CommentCard(
+                      comment: c,
+                      onToggleLike: () => context.read<CommentProvider>().toggleLike(c.commentId),
+                    ),
+                  ),
                 ],
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 }
-

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/theme_provider.dart';
 
+// The settings screen only has one setting which is changing the theme for now
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -18,6 +19,9 @@ class SettingsScreen extends StatelessWidget {
           children: [
             const Text("Appearance:", style: TextStyle(fontSize: 18)),
             const SizedBox(height: 10),
+            // We use a dropdown to make sure it can handle system and not just
+            // dark/light modes. The dropdown also only deals with our enum
+            // AppThemeMode which we define in theme_provider
             DropdownButton<AppThemeMode>(
               value: themeProvider.mode,
               onChanged: (mode) {
@@ -31,13 +35,12 @@ class SettingsScreen extends StatelessWidget {
                   child: Text("Dark mode"),
               ),
                 DropdownMenuItem(
-                  value: AppThemeMode.system,
-                  child: Text("System preference"),
-                ),
-
-                DropdownMenuItem(
                   value: AppThemeMode.light,
                   child: Text("Light mode"),
+                ),
+                DropdownMenuItem(
+                  value: AppThemeMode.system,
+                  child: Text("System preference"),
                 ),
               ],
             )

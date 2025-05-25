@@ -21,6 +21,7 @@ class CommentCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ---------- Username with link to profile ----------
             GestureDetector(
               onTap: () => context.push('/user/${comment.authorId}'),
               child: Text(
@@ -32,8 +33,10 @@ class CommentCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
+            // ---------- Comments text ----------
             Text(comment.commentText),
             const SizedBox(height: 8),
+            // ---------- Like button and timestamp ----------
             Row(
               children: [
                 IconButton(
@@ -57,6 +60,8 @@ class CommentCard extends StatelessWidget {
     );
   }
 
+  // A separate function to convert the DateTime to a string
+  // Different types of texts depending on how recent the poll was made
   String _formatTime(DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);

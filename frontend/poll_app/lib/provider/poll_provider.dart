@@ -8,6 +8,8 @@ class PollProvider extends ChangeNotifier {
   bool isLoadingUnvoted = false;
   bool isLoadingFriends = false;
 
+  // If silent is true, dont make it load visually, just refresh directly
+  // This happens in the background when voting for a poll (see poll_screen)
   Future<void> loadUnvoted({bool silent = false}) async {
     if (!silent) {
       isLoadingUnvoted = true;

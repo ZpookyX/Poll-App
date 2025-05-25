@@ -5,17 +5,49 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="050e0251-a5e2-4276-b2bb-72e098b2442c" name="Changes" comment="Merge">
+      <change afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/create_poll_provider.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/poll_screen_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/demo_user.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/demo_user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/poll.db" beforeDir="false" afterPath="$PROJECT_DIR$/backend/poll.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/android/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/models/poll.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/models/poll.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/comment_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/comment_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/poll_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/poll_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/profile_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/profile_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/theme_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/theme_provider.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/routes/app_router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/routes/app_router.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/poll_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/poll_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/settings_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/settings_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/services/http_client.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/services/http_client.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/test/widget_test.dart" beforeDir="false" />
     </list>
-    <list id="d8617314-fca6-4440-a275-259ea9ed5c2a" name="Changes by axel" comment="" />
+    <list id="d8617314-fca6-4440-a275-259ea9ed5c2a" name="Changes by axel" comment="">
+      <change beforePath="$PROJECT_DIR$/backend/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/models/comment.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/models/comment.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/poll_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/poll_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/profile_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/profile_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/provider/theme_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/provider/theme_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/create_poll_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/create_poll_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/login_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/login_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/settings_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/settings_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/bottom_nav_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/bottom_nav_bar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -43,6 +75,214 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/provider/auth_provider.dart">
+      <ranges>
+        <range start1="6" end1="6" start2="6" end2="8" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="22" end1="23" start2="24" end2="25" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="24" end1="24" start2="26" end2="27" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="26" end1="27" start2="29" end2="30" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="29" end1="30" start2="32" end2="33" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="32" end1="32" start2="35" end2="37" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="34" end1="34" start2="39" end2="40" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="35" end1="35" start2="41" end2="44" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="37" end1="37" start2="46" end2="47" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="38" end1="38" start2="48" end2="49" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="45" end1="45" start2="56" end2="57" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="56" end1="56" start2="68" end2="69" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="60" end1="61" start2="73" end2="74" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="62" end1="62" start2="75" end2="76" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="66" end1="68" start2="80" end2="82" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="73" end1="73" start2="87" end2="88" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="83" end1="84" start2="98" end2="99" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="89" end1="89" start2="104" end2="105" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="97" end1="97" start2="113" end2="114" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/screens/profile_screen.dart">
+      <ranges>
+        <range start1="5" end1="6" start2="5" end2="5" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="20" end1="20" start2="19" end2="20" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="26" end1="26" start2="26" end2="28" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="38" end1="38" start2="40" end2="41" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="47" end1="47" start2="50" end2="51" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="71" end1="71" start2="75" end2="76" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="82" end1="82" start2="87" end2="88" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="95" end1="95" start2="101" end2="103" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="102" end1="102" start2="110" end2="111" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart">
+      <ranges>
+        <range start1="2" end1="2" start2="2" end2="3" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="4" end1="5" start2="5" end2="5" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="14" end1="14" start2="14" end2="15" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="15" end1="15" start2="16" end2="18" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="17" end1="21" start2="20" end2="23" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="22" end1="26" start2="24" end2="34" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="27" end1="27" start2="35" end2="52" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="33" end1="33" start2="58" end2="59" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="39" end1="39" start2="65" end2="66" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="43" end1="47" start2="70" end2="72" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="50" end1="51" start2="75" end2="76" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/backend/server.py">
+      <ranges>
+        <range start1="17" end1="17" start2="17" end2="18" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="19" end1="19" start2="20" end2="21" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="29" end1="29" start2="31" end2="32" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="33" end1="34" start2="36" end2="37" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="38" end1="38" start2="41" end2="42" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="40" end1="41" start2="44" end2="45" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="44" end1="44" start2="48" end2="50" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="55" end1="56" start2="61" end2="62" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="67" end1="67" start2="73" end2="75" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="79" end1="79" start2="87" end2="88" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="90" end1="92" start2="99" end2="99" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="112" end1="112" start2="119" end2="120" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="114" end1="115" start2="122" end2="122" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="130" end1="131" start2="137" end2="138" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="135" end1="136" start2="142" end2="143" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="168" end1="169" start2="175" end2="176" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="174" end1="176" start2="181" end2="183" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="179" end1="181" start2="186" end2="190" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="184" end1="184" start2="193" end2="195" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="185" end1="186" start2="196" end2="199" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="190" end1="191" start2="203" end2="204" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="192" end1="193" start2="205" end2="206" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="198" end1="198" start2="211" end2="213" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="202" end1="202" start2="217" end2="219" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="208" end1="208" start2="225" end2="226" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="214" end1="214" start2="232" end2="233" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="218" end1="219" start2="237" end2="238" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="230" end1="231" start2="249" end2="250" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="234" end1="236" start2="253" end2="255" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="242" end1="243" start2="261" end2="262" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="261" end1="261" start2="280" end2="281" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="264" end1="264" start2="284" end2="285" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="277" end1="277" start2="298" end2="300" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="279" end1="281" start2="302" end2="302" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="305" end1="305" start2="326" end2="327" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="313" end1="313" start2="335" end2="336" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="345" end1="345" start2="368" end2="369" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="356" end1="357" start2="380" end2="381" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="376" end1="376" start2="400" end2="402" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="394" end1="394" start2="420" end2="421" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="400" end1="400" start2="427" end2="429" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="417" end1="418" start2="446" end2="447" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="452" end1="453" start2="481" end2="482" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="463" end1="465" start2="492" end2="494" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="490" end1="490" start2="519" end2="520" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="505" end1="509" start2="535" end2="535" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/provider/poll_provider.dart">
+      <ranges>
+        <range start1="10" end1="10" start2="10" end2="12" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="45" end1="46" start2="47" end2="47" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/provider/theme_provider.dart">
+      <ranges>
+        <range start1="6" end1="7" start2="6" end2="7" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="10" end1="10" start2="10" end2="12" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="17" end1="19" start2="19" end2="20" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="32" end1="32" start2="33" end2="34" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="34" end1="35" start2="36" end2="37" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="39" end1="39" start2="41" end2="42" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/screens/settings_screen.dart">
+      <ranges>
+        <range start1="4" end1="4" start2="4" end2="5" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="20" end1="20" start2="21" end2="24" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="33" end1="35" start2="37" end2="39" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="36" end1="37" start2="40" end2="40" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="38" end1="40" start2="41" end2="43" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart">
+      <ranges>
+        <range start1="3" end1="4" start2="3" end2="3" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="7" end1="8" start2="6" end2="6" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="10" end1="10" start2="8" end2="9" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="12" end1="18" start2="11" end2="13" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="22" end1="27" start2="17" end2="19" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="30" end1="31" start2="22" end2="23" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="43" end1="46" start2="35" end2="37" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="61" end1="62" start2="52" end2="53" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="74" end1="74" start2="65" end2="66" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="81" end1="82" start2="73" end2="74" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="89" end1="89" start2="81" end2="82" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="91" end1="91" start2="84" end2="85" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="104" end1="104" start2="98" end2="101" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="117" end1="117" start2="114" end2="115" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="118" end1="120" start2="116" end2="118" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="122" end1="122" start2="120" end2="121" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="127" end1="128" start2="126" end2="127" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="130" end1="130" start2="129" end2="130" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="132" end1="133" start2="132" end2="133" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="135" end1="135" start2="135" end2="136" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="144" end1="145" start2="145" end2="146" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="148" end1="149" start2="149" end2="150" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="155" end1="157" start2="156" end2="158" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="161" end1="162" start2="162" end2="163" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="163" end1="164" start2="164" end2="168" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/backend/tester.py">
+      <ranges>
+        <range start1="5" end1="6" start2="5" end2="6" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="47" end1="48" start2="47" end2="48" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="49" end1="50" start2="49" end2="50" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="54" end1="55" start2="54" end2="55" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="59" end1="60" start2="59" end2="60" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="73" end1="74" start2="73" end2="74" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="91" end1="92" start2="91" end2="92" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="109" end1="110" start2="109" end2="110" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="127" end1="128" start2="127" end2="128" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="147" end1="148" start2="147" end2="148" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="165" end1="166" start2="165" end2="166" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/provider/profile_provider.dart">
+      <ranges>
+        <range start1="8" end1="8" start2="8" end2="9" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="14" end1="14" start2="15" end2="16" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="21" end1="21" start2="23" end2="25" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="23" end1="25" start2="27" end2="28" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="33" end1="33" start2="36" end2="37" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="41" end1="41" start2="45" end2="46" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/widgets/comment_card.dart">
+      <ranges>
+        <range start1="23" end1="23" start2="23" end2="24" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="34" end1="34" start2="35" end2="36" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="36" end1="36" start2="38" end2="39" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="59" end1="59" start2="62" end2="64" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart">
+      <ranges>
+        <range start1="5" end1="5" start2="5" end2="7" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="6" end1="6" start2="8" end2="9" changelist="050e0251-a5e2-4276-b2bb-72e098b2442c" />
+        <range start1="7" end1="7" start2="10" end2="13" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="20" end1="20" start2="26" end2="27" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="46" end1="46" start2="53" end2="62" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="47" end1="47" start2="63" end2="81" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="52" end1="56" start2="86" end2="91" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="58" end1="61" start2="93" end2="98" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="62" end1="63" start2="99" end2="104" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="64" end1="67" start2="105" end2="112" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="68" end1="69" start2="113" end2="115" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="71" end1="78" start2="117" end2="119" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="80" end1="86" start2="121" end2="122" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+        <range start1="112" end1="141" start2="148" end2="148" changelist="d8617314-fca6-4440-a275-259ea9ed5c2a" />
+      </ranges>
+    </file>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -76,7 +316,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "SDKs",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.pluginManager",
@@ -246,7 +486,8 @@
       <workItem from="1747930538061" duration="1450000" />
       <workItem from="1747932036089" duration="19619000" />
       <workItem from="1747986024053" duration="2208000" />
-      <workItem from="1747988251005" duration="19030000" />
+      <workItem from="1747988251005" duration="35533000" />
+      <workItem from="1748172095914" duration="10757000" />
     </task>
     <servers />
   </component>
@@ -257,9 +498,23 @@
     <MESSAGE value="Merge" />
     <option name="LAST_COMMIT_MESSAGE" value="Merge" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/frontend/poll_app/lib/services/api.dart</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/frontend/poll_app/lib/widgets/poll_list.dart</url>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/tddd80_2025_projekt$.coverage" NAME=" Coverage Results" MODIFIED="1747992843795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
-    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$demo_user.coverage" NAME="demo_user Coverage Results" MODIFIED="1747999890747" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
-    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$server.coverage" NAME="server Coverage Results" MODIFIED="1748003491256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$demo_user.coverage" NAME="demo_user Coverage Results" MODIFIED="1748175293692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+    <SUITE FILE_PATH="coverage/tddd80_2025_projekt$server.coverage" NAME="server Coverage Results" MODIFIED="1748175059274" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
   </component>
 </project>

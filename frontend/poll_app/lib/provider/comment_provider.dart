@@ -5,7 +5,7 @@ import '../services/api.dart';
 class CommentProvider extends ChangeNotifier {
   final String pollId;
   List<Comment> comments = [];
-  bool isLoading = false;
+  bool isLoading = false; // Used for loading symbol
 
   CommentProvider(this.pollId) {
     loadComments();
@@ -24,6 +24,7 @@ class CommentProvider extends ChangeNotifier {
     await loadComments();
   }
 
+  // A single function for both unliking and liking based on likedByUser
   Future<void> toggleLike(int commentId) async {
     final index = comments.indexWhere((c) => c.commentId == commentId);
     if (index == -1) return;
@@ -55,7 +56,8 @@ class CommentProvider extends ChangeNotifier {
       }
       notifyListeners();
     } catch (_) {
-      // handle error silently or add logging
+      // Handle error silently
+      // Best practice would be to handle all errors here but yeah...
     }
   }
 }

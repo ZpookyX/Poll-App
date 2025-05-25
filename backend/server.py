@@ -15,8 +15,10 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 from dotenv import load_dotenv
 
+# We import the secret key and the client-ids
 load_dotenv()
 
+# App isn't tested completely on web so unsure if web works
 CLIENT_IDS = [
     os.getenv("GOOGLE_CLIENT_ID_WEB"),
     os.getenv("GOOGLE_CLIENT_ID_IOS"),
@@ -27,21 +29,25 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
 
+# Initializing CORS allows flutter frontend to make HTTP requests to your flask backend
 CORS(app,
      supports_credentials=True,
      origins=["http://localhost:5173"])
 
-# set up db, uses sqlite
+# Set up db, uses sqlite
 db_path = os.path.join(os.path.dirname(__file__), 'poll.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 db = SQLAlchemy(app)
 
+# Initializes Flask-Login to manage user sessions and authentication
 login_manager = LoginManager(app)
 
-# ---------------------- models ----------------------
+# ---------------------- Models ----------------------
 class User(db.Model, UserMixin):
     __tablename__ = "user"
     id: Mapped[int] = mapped_column(primary_key=True)
+
+    # This is for now only the email of the user - in the future we would want the user to have email and username
     username: Mapped[str] = mapped_column(unique=True, nullable=False)
 
     # Two list that are backpopulated by the other tables
@@ -53,7 +59,7 @@ class User(db.Model, UserMixin):
     followers: Mapped[list["Follow"]] = relationship(
         "Follow", foreign_keys="[Follow.followed_id]", back_populates="followed", cascade="all, delete-orphan")
 
-# A function for checking if the user is logged in as well as user info
+# Returns the current user's info if logged in
 @app.get('/whoami')
 def whoami():
     if current_user.is_authenticated:
@@ -65,6 +71,8 @@ def whoami():
         )
     return jsonify(id=None), 401
 
+# Slightly different from previous endpoint
+# This one checks a specific id and has no connection to current_user
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user_info(user_id):
     user = db.session.get(User, user_id)
@@ -78,6 +86,7 @@ def get_user_info(user_id):
         'following': len(user.following),
     }), 200
 
+
 class Poll(db.Model):
     __tablename__ = "poll"
     poll_id: Mapped[int] = mapped_column(primary_key=True)
@@ -88,8 +97,6 @@ class Poll(db.Model):
     creator = relationship("User", backref="polls")
     comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="poll", cascade="all, delete-orphan")
     options: Mapped[list["PollOption"]] = relationship("PollOption", back_populates="poll", cascade="all, delete-orphan")
-
-
 
 class PollOption(db.Model):
     __tablename__ = "poll_option"
@@ -110,9 +117,9 @@ class Vote(db.Model):
 
     option = relationship("PollOption", back_populates="votes")
 
+    # This constraint just makes sure that you can't vote twice
     __table_args__ = (UniqueConstraint('poll_id', 'user_id', name='_poll_user_uc'),)
 
-# Comment model
 class Comment(db.Model):
     __tablename__ = "comment"
     comment_id: Mapped[int] = mapped_column(primary_key=True)
@@ -128,12 +135,12 @@ class Comment(db.Model):
     author = relationship("User", back_populates="comments")
     poll = relationship("Poll", back_populates="comments")
 
-    # Remote side below has to be defined since we have to foreign keys
+    # Remote side below has to be defined since we have two foreign keys
     replies = relationship("Comment", backref=backref("parent", remote_side=[comment_id]), cascade="all, delete-orphan" )
     likes: Mapped[list["CommentLike"]] = relationship("CommentLike", back_populates="comment", cascade="all, delete-orphan")
 
     __table_args__ = (
-        # enforce that it’s on exactly one of poll _or_ parent
+        # Enforce that it’s on exactly one of poll _or_ parent
         CheckConstraint(
             "(poll_id IS NOT NULL)  <>  (parent_comment_id IS NOT NULL)",
             name="ck_comment_on_one_object"
@@ -166,57 +173,69 @@ class Follow(db.Model):
     # Basically you can only follow someone ones and you can't follow yourself.
     __table_args__ = (
         UniqueConstraint("follower_id", "followed_id",name="uq_follower_followed"),
-        CheckConstraint("follower_id <> followed_id",name="ck_no_self_follow"), # I SQL pga CheckConstraint
+        CheckConstraint("follower_id <> followed_id",name="ck_no_self_follow"),
     )
 
 # ---------------------- Google login ----------------------
 @app.route('/login', methods=['POST'])
 def google_login():
-    id_token_str   = request.json.get('id_token')
-    access_token   = request.json.get('access_token')
+    id_token_str   = request.json.get('id_token')   # User info
+    access_token   = request.json.get('access_token')   # Allows Google API access
 
     try:
         if id_token_str:
-            info = id_token.verify_oauth2_token(id_token_str,
-                                                grequests.Request())
+            # We verify the ID token and extracts user info (locally)
+            info = id_token.verify_oauth2_token(id_token_str, grequests.Request())
+
+            # We only accept tokens intended for our app
             if info['aud'] not in CLIENT_IDS:
                 raise ValueError
             email = info['email']
+
+            # This elif is only accessed if we didn't get ID-token
         elif access_token:
-            r = requests.get(
+
+            # Uses access token to fetch user info from Google userinfo API
+            response = requests.get(
                 'https://www.googleapis.com/oauth2/v3/userinfo',
                 headers={'Authorization': f'Bearer {access_token}'},
                 timeout=3,
             )
-            if r.status_code != 200:
+            if response.status_code != 200:
                 raise ValueError
-            email = r.json()['email']
+            email = response.json()['email']
         else:
             return jsonify(error='Missing token'), 400
 
         user = User.query.filter_by(username=email).first()
         if not user:
+            # New users are registered on first login
+            # The email acts as username for now
             user = User(username=email)
             db.session.add(user)
             db.session.commit()
 
+        # Login manager logs in user
+        # Remember=True means we store the session info in a cookie
         login_user(user, remember=True)
         return jsonify(message='logged in',
                        user={'id': user.id, 'username': user.username}), 200
     except ValueError:
         return jsonify(error='Invalid token'), 400
 
+# Login manager logs out and loads user below
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return jsonify({'message': 'logged out'}), 200
 
+# Makes current_user work
 @login_manager.user_loader
 def load_user(uid):
     return db.session.get(User, int(uid))
 
-# ---------------------- poll endpoints ----------------------
+# ---------------------- Poll endpoints ----------------------
 @app.route('/polls', methods=['POST'])
 @login_required
 def create_poll():
@@ -228,19 +247,19 @@ def create_poll():
 
     new_poll = Poll(question=data['question'],
                     creator_id=current_user.id,
-                    timeleft=datetime.now() + timedelta(hours=12)) # Hard coded for now
+                    timeleft=datetime.now() + timedelta(hours=12)) # Hard coded for now (You cant specify in app)
     db.session.add(new_poll)
     db.session.flush()
 
-    for txt in data['options']:
-        db.session.add(PollOption(poll_id=new_poll.poll_id, option_text=txt))
+    for option_text in data['options']:
+        db.session.add(PollOption(poll_id=new_poll.poll_id, option_text=option_text))
 
     db.session.commit()
     return jsonify({'poll_id': new_poll.poll_id}), 201
 
 @app.route('/polls', methods=['GET'])
 @login_required
-def list_polls():
+def list_polls():   # This endpoint is a general endpoint for almost all types of poll-lists we would want
     filter_type = request.args.get('filter')
     sort_type = request.args.get('sort')
     user_id_arg = request.args.get('user_id')
@@ -259,9 +278,11 @@ def list_polls():
                     return True
         return False
 
+    # A function that is used below for sorting
     def total_votes(poll):
         return sum(len(option.votes) for option in poll.options)
 
+    # Here are all the filters handled
     if filter_type == 'unvoted':
         all_polls = [poll for poll in all_polls if not user_has_voted(poll)]
     elif filter_type == 'user':
@@ -275,10 +296,10 @@ def list_polls():
                 interacted.append(poll)
         all_polls = interacted
 
+    # Here are all the sorting options handled
+    # These aren't used currently since we didn't have time to implement sorting
     if sort_type == 'votes':
         all_polls.sort(key=total_votes, reverse=True)
-    elif sort_type == 'votes_asc':
-        all_polls.sort(key=total_votes)
     elif sort_type == 'completed':
         all_polls.sort(key=user_has_voted, reverse=True)
 
@@ -303,6 +324,7 @@ def list_polls():
 @app.route('/polls/<poll_id>', methods=['GET'])
 def retrieve_poll(poll_id):
     try:
+        # Make sure poll_id is integer not string
         poll_id = int(poll_id)
     except ValueError:
         return jsonify({'message': 'invalid poll id'}), 400
@@ -311,6 +333,7 @@ def retrieve_poll(poll_id):
     if not poll:
         return jsonify({'message': 'poll not found'}), 404
 
+    # Creates a list of all the options to put in the final json
     options = [{'option_id': option.option_id,
                 'option_text': option.option_text,
                 'votes': len(option.votes)} for option in poll.options]
@@ -343,6 +366,7 @@ def vote_poll(poll_id):
     db.session.commit()
     return jsonify({'message': 'vote recorded'}), 200
 
+# Checks if a user has voted on a certain poll
 @app.route('/polls/<poll_id>/has_voted', methods=['GET'])
 @login_required
 def has_voted(poll_id):
@@ -354,7 +378,7 @@ def has_voted(poll_id):
     voted = Vote.query.filter_by(poll_id=poll_id, user_id=current_user.id).first()
     return jsonify({'voted': voted is not None}), 200
 
-# ---------------------- comment endpoints ----------------------
+# ---------------------- Comment endpoints ----------------------
 
 @app.route('/polls/<int:poll_id>/comments', methods=['POST'])
 @login_required
@@ -374,6 +398,8 @@ def comment_poll(poll_id):
     db.session.commit()
     return jsonify({'comment_id': comment.comment_id}), 201
 
+# Intended to be used, but we didn't have time
+# Practically the same as a normal comment but its parent is another comment instead of a poll
 @app.route('/comments/<int:parent_id>/replies', methods=['POST'])
 @login_required
 def reply_comment(parent_id):
@@ -392,12 +418,15 @@ def reply_comment(parent_id):
     db.session.commit()
     return jsonify({'comment_id': comment.comment_id}), 201
 
+# Gets all the comments for a poll to display
 @app.route('/polls/<int:poll_id>/comments', methods=['GET'])
 def retrieve_poll_comments(poll_id):
     poll = db.session.get(Poll, poll_id)
     if not poll:
         return jsonify({'message': 'poll not found'}), 404
 
+    # This is just to keep track of which comments the user has liked for UI highlighting
+    # and in comment_provider to decide which request to send, unlike or like
     liked_ids = set()
     if current_user.is_authenticated:
         liked_ids = {like.comment_id for like in current_user.liked_comments}
@@ -415,7 +444,7 @@ def retrieve_poll_comments(poll_id):
     return jsonify(res), 200
 
 
-# ---------------------- like endpoints ----------------------
+# ---------------------- Like Endpoints ----------------------
 
 @app.route('/comments/<int:comment_id>/like', methods=['POST'])
 @login_required
@@ -450,7 +479,7 @@ def unlike_comment(comment_id):
     return jsonify({'like_count': len(comment.likes)}), 200
 
 
-# ---------------------- follow endpoints ----------------------
+# ---------------------- Follow endpoints ----------------------
 
 @app.route('/users/<int:uid>/follow', methods=['POST'])
 @login_required
@@ -461,8 +490,8 @@ def follow_user(uid):
     if any(follow.followed_id == uid for follow in current_user.following):
         return jsonify({'message': 'already following'}), 400
 
-    f = Follow(follower_id=current_user.id, followed_id=uid)
-    current_user.following.append(f)
+    follow = Follow(follower_id=current_user.id, followed_id=uid)
+    current_user.following.append(follow)
     db.session.commit()
     return jsonify({'followed_id': uid}), 201
 
@@ -488,6 +517,7 @@ def check_following_status(user_id):
     is_following = any(follow.followed_id == user_id for follow in current_user.following)
     return jsonify({'is_following': is_following}), 200
 
+# Was to be implemented in frontend but no time
 @app.route('/users/me/following', methods=['GET'])
 @login_required
 def list_my_following():
@@ -503,10 +533,6 @@ def not_found(e):   return jsonify({'message': 'not found'}), 404
 def bad_req(e):     return jsonify({'message': 'bad request'}), 400
 @app.errorhandler(500)
 def server_err(e):  return jsonify({'message': 'internal server error'}), 500
-
-@app.before_request
-def debug_log():
-    print(f"{request.method} {request.path} | Auth: {current_user.is_authenticated}")
 
 if __name__ == '__main__':
     with app.app_context():

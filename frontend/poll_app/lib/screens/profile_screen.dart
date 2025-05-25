@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../provider/auth_provider.dart';
 import '../provider/profile_provider.dart';
 import '../widgets/poll_list.dart';
-import '../services/api.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -18,12 +17,15 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
   late TabController _tabController;
 
+  // Determines if this is the current user's profile
   bool get isOwnProfile => widget.userId == null;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // Load profile data after first frame
+    // Ensures context is valid before calling Provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProfileProvider>().loadUserProfile(userId: widget.userId);
     });
@@ -36,6 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
+        // Only show back button if viewing someone else
         leading: isOwnProfile ? null : IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -45,6 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
           ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
+          // ---------- Profile header section ----------
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             child: Row(
@@ -69,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                     ],
                   ),
                 ),
+                // ---------- Follow/unfollow button for other users ----------
                 if (!isOwnProfile)
                   Consumer<ProfileProvider>(
                     builder: (context, profile, _) => ElevatedButton(
@@ -80,6 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                       ),
                     ),
                   ),
+                // ---------- Logout button for current user ----------
                 if (isOwnProfile)
                   IconButton(
                     icon: const Icon(Icons.logout),
@@ -93,6 +99,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
               ],
             ),
           ),
+          // ---------- Tab bar ----------
+          // Shows either My Polls or Polls and Interacted tabs depending on user
           TabBar(
             controller: _tabController,
             tabs: [
@@ -100,6 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
               Tab(text: isOwnProfile ? 'Interacted' : 'Interacted Polls'),
             ],
           ),
+          // ---------- Tab bar content ----------
           Expanded(
             child: TabBarView(
               controller: _tabController,

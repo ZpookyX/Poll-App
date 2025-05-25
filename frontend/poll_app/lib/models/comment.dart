@@ -18,6 +18,9 @@ class Comment {
     j['author_username'],
     j['like_count'],
     DateTime.parse(j['post_time']),
+
+    // This is used by provider to check which request to send
+    // and also by frontend to highlight the like symbol
     likedByUser: j['liked_by_user'] ?? false,
   );
 }
