@@ -52,7 +52,7 @@ class CreatePollScreen extends StatelessWidget {
                       if (form.optionControllers.length > 2)
                         IconButton(
                           onPressed: () => form.removeOptionField(entry.key),
-                          icon: const Icon(Icons.close, color: Colors.black),
+                          icon: const Icon(Icons.close),
                         ),
                     ],
                   ),

@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Polls',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+              style: TextStyle(fontWeight: FontWeight.bold)),
           bottom: const TabBar(
             tabs: [
               Tab(text: 'To Vote'),
