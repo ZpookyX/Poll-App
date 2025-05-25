@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="050e0251-a5e2-4276-b2bb-72e098b2442c" name="Changes" comment="Merge">
+      <change afterPath="$PROJECT_DIR$/backend/.env.example" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/create_poll_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/create_poll_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/poll_app/lib/screens/home_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <list id="d8617314-fca6-4440-a275-259ea9ed5c2a" name="Changes by axel" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +70,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "SDKs",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.pluginManager",
@@ -241,7 +241,7 @@
       <workItem from="1747932036089" duration="19619000" />
       <workItem from="1747986024053" duration="2208000" />
       <workItem from="1747988251005" duration="35533000" />
-      <workItem from="1748172095914" duration="11562000" />
+      <workItem from="1748172095914" duration="13443000" />
     </task>
     <servers />
   </component>
