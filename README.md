@@ -63,7 +63,7 @@ Totalt 12 poäng.
    flutter pub get
    ```
 
-3. Starta appen
+3. Starta appen. Se till att du har valt emulator i IDE.
    ```bash
    flutter run
    ```
