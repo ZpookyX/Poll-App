@@ -49,16 +49,21 @@ Totalt 12 poäng.
 
 4. Starta backend:
       ```bash
-      python server.py # eller: export FLASK_APP=server && flask run
+      python backend/server.py # eller: export FLASK_APP=server && flask run
       ```
 
 ### Klient (Flutter)
-1. Hämta paket:
+1. Gå till rätt mapp
+```bash
+   cd frontend
+   ```
+
+2. Hämta paket:
    ```bash
    flutter pub get
    ```
 
-2. Starta appen
+3. Starta appen
    ```bash
    flutter run
    ```
