@@ -32,7 +32,7 @@ Totalt 12 poäng.
 ### Backend (Flask)
 1. Skapa och aktivera virtuell miljö:
    ```bash
-   python3.13 -m venv venv
+   python -m venv venv
    source venv/bin/activate   # macOS/Linux
    venv\Scripts\activate    # Windows
    ```  
